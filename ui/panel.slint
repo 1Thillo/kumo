@@ -114,6 +114,8 @@ export global State {
     callback reset-all();
     callback uninstall();
     callback open-license();
+    callback open-notices();
+    callback open-source();
 }
 
 component NavItem inherits Rectangle {
@@ -1413,6 +1415,30 @@ component AboutPage inherits Rectangle {
                     Btn {
                         text: @tr("Show");
                         clicked => { State.open-license(); }
+                    }
+                }
+            }
+            Card {
+                icon: "\u{E8A5}";
+                title: @tr("Third-party notices");
+                description: @tr("Kumo is built with open source libraries. Here are their authors and licenses.");
+                VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        text: @tr("Show");
+                        clicked => { State.open-notices(); }
+                    }
+                }
+            }
+            Card {
+                icon: "\u{E774}";
+                title: @tr("Source code");
+                description: @tr("The complete source code of Kumo is on GitHub.");
+                VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        text: @tr("Show");
+                        clicked => { State.open-source(); }
                     }
                 }
             }

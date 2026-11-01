@@ -12,7 +12,6 @@ pub type V3 = [f32; 3];
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Manifest {
-    pub title: String,
     pub camera: Camera,
     pub fog: Fog,
     pub shadow: Shadow,

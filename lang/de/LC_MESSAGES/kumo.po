@@ -384,6 +384,18 @@ msgstr "Freie Software unter der GNU GPL v3. Erstellt mit Slint (GPL v3)."
 msgid "Show"
 msgstr "Anzeigen"
 
+msgid "Third-party notices"
+msgstr "Hinweise zu Drittanbieter-Software"
+
+msgid "Kumo is built with open source libraries. Here are their authors and licenses."
+msgstr "Kumo baut auf Open-Source-Bibliotheken auf. Hier stehen ihre Autoren und Lizenzen."
+
+msgid "Source code"
+msgstr "Quellcode"
+
+msgid "The complete source code of Kumo is on GitHub."
+msgstr "Der vollständige Quellcode von Kumo liegt auf GitHub."
+
 msgid "No account, no ads, no telemetry."
 msgstr "Kein Konto, keine Werbung, keine Telemetrie."
 

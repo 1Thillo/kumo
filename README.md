@@ -156,8 +156,10 @@ src/
 ui/             the Slint windows and the design tokens
 lang/           German translation
 scenes/pagoda/  scene generator (JavaScript) and bake script
-assets/         baked scene, icon, pictures
+assets/         baked scene, icon, pictures, third-party notices
 docs/design/    UI specification and mockup
+site/           the website (static files for Vercel, media rendered by tools/site_media.ps1)
+tools/          generators for the third-party notices and the website media
 ```
 
 ### The `.kumo` format
@@ -200,3 +202,7 @@ Kumo is free software under the [GNU General Public License v3.0](LICENSE) (the 
 as Lively Wallpaper): you may use, study, change and share it, and changed versions you
 distribute must be under the same license, with their source code. Its user interface is built
 with [Slint](https://slint.dev), used under the GPL.
+
+The authors and licenses of all libraries in Kumo are in
+[assets/third-party-notices.txt](assets/third-party-notices.txt), which the program also shows
+under *About Kumo*. After changing dependencies, run `python tools/third_party.py`.

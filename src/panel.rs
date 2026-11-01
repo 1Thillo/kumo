@@ -113,6 +113,14 @@ fn open(target: &str, args: Option<&str>) {
     }
 }
 
+/// Opens a text that is built into the exe: Kumo is one file, with nothing next to it.
+fn open_text(name: &str, text: &str) {
+    let path = std::env::temp_dir().join(name);
+    if std::fs::write(&path, text).is_ok() {
+        open(&path.display().to_string(), None);
+    }
+}
+
 fn confirm(title: &str, text: &str) -> bool {
     unsafe { MessageBoxW(None, &HSTRING::from(text), &HSTRING::from(title), MB_YESNO | MB_ICONQUESTION | MB_SETFOREGROUND) == IDYES }
 }
@@ -1053,13 +1061,9 @@ pub fn run_panel() {
             open("ms-settings:appsfeatures", None);
         }
     });
-    st.on_open_license(|| {
-        let local = std::env::current_exe().ok().and_then(|e| e.parent().map(|p| p.join("LICENSE.txt"))).filter(|p| p.exists());
-        match local {
-            Some(p) => open(&p.display().to_string(), None),
-            None => open("https://www.gnu.org/licenses/gpl-3.0.html", None),
-        }
-    });
+    st.on_open_license(|| open_text("Kumo-License.txt", include_str!("../LICENSE")));
+    st.on_open_notices(|| open_text("Kumo-Third-Party-Notices.txt", include_str!("../assets/third-party-notices.txt")));
+    st.on_open_source(|| open("https://github.com/Hamido212/kumo", None));
 
     // drag & drop from Explorer
     let (w2, c2) = (weak.clone(), ctx.clone());

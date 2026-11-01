@@ -292,7 +292,7 @@ button { font: inherit; color: inherit; cursor: pointer; background: none; borde
 /* ------------------------------------------------------------ footer */
 footer { position: relative; isolation: isolate; overflow: hidden; margin-top: 110px; border-top: 1px solid var(--line); }
 footer .contours { opacity: .13; -webkit-mask-image: linear-gradient(transparent, #000 60%); mask-image: linear-gradient(transparent, #000 60%); }
-.foot-row { display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: space-between; max-width: var(--page); margin: 0 auto; padding: 24px var(--gutter) 0; font-size: .93rem; color: var(--muted); box-sizing: content-box; }
+.foot-row { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 10px 26px; justify-content: space-between; max-width: var(--page); margin: 0 auto; padding: 24px var(--gutter) 0; font-size: .93rem; color: var(--muted); box-sizing: content-box; }
 .foot-row nav { display: flex; gap: 20px; }
 .foot-row a { text-underline-offset: 3px; }
 .foot-row a:hover { color: var(--text); }
@@ -300,6 +300,7 @@ footer .contours { opacity: .13; -webkit-mask-image: linear-gradient(transparent
   margin: 8px 0 -.2em; text-align: center; font-size: 33vw; font-weight: 760; line-height: .9; letter-spacing: -.055em;
   color: transparent; background: linear-gradient(180deg, #f0935f 6%, #f2a2be 34%, #6f56b4 62%, #0e0c1a 82%); -webkit-background-clip: text; background-clip: text;
   user-select: none;
+  pointer-events: none; /* its text box reaches far above the letters, over the links */
 }
 
 /* ------------------------------------------------------------ legal pages */

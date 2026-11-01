@@ -1,0 +1,12 @@
+{
+  "name": "kumo-scene-pagoda",
+  "private": true,
+  "type": "module",
+  "description": "Generates the Voxel Pagoda Garden scene and bakes it into assets/pagoda.kumo",
+  "scripts": {
+    "bake": "node bake.mjs ../../assets/pagoda.kumo"
+  },
+  "dependencies": {
+    "three": "0.170.0"
+  }
+}

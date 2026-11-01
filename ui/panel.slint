@@ -1,0 +1,1674 @@
+// Kumo control panel (docs/design/ui-spec.md §6). All state lives in the `State` global, which
+// the Rust side (src/panel.rs) fills and listens to.
+
+import { ComboBox, ScrollView, Palette } from "std-widgets.slint";
+import { Theme, Icon, Btn, LinkBtn, Toggle, Segmented, SliderX, Card, SectionTitle, InfoBar, KeyFocus } from "theme.slint";
+
+export struct TileData {
+    id: string,
+    title: string,
+    meta: string,
+    kind: int, // 0 scene, 1 video, 2 image
+    thumb: image,
+    has-thumb: bool,
+    active: bool,
+    active-label: string,
+    builtin: bool,
+}
+
+export struct ScreenData {
+    label: string,
+    name: string,
+    detail: string,
+    fx: float,
+    fy: float,
+    fw: float,
+    fh: float,
+    thumb: image,
+    has-thumb: bool,
+    wallpaper: string,
+    kind: int,
+    primary: bool,
+    off: bool,
+}
+
+export global State {
+    in-out property <int> page: 0; // 0 library, 1 detail, 2 displays, 3 performance, 4 settings, 5 about
+    in property <[TileData]> tiles;
+    in property <[ScreenData]> screens;
+    in property <float> layout-aspect: 1.78;
+    in-out property <bool> per-monitor;
+    in-out property <int> selected-screen: 0;
+    in-out property <bool> pick-mode;
+    in-out property <bool> screen-on: true;
+    in property <string> now-title;
+    in property <string> now-sub;
+    in property <image> now-thumb;
+    in property <bool> now-has-thumb;
+    in property <int> now-kind;
+    in property <bool> paused;
+    in property <bool> running: true;
+    in property <string> ram: "–";
+    in property <string> cpu: "–";
+    in property <string> panel-ram: "–";
+    in property <string> fps-text: "";
+    // detail page
+    in property <TileData> detail;
+    in property <string> detail-type;
+    in property <string> detail-source;
+    in property <string> detail-memory;
+    in property <string> detail-status;
+    in-out property <int> time-mode;
+    in-out property <float> hour: 16.5;
+    in-out property <int> lapse-index: 2;
+    in-out property <float> rotate: 1;
+    in-out property <int> petals-index: 2;
+    in-out property <bool> parallax;
+    in-out property <int> fit-index;
+    in-out property <int> speed-index: 1;
+    // performance
+    in-out property <int> fps-index: 1;
+    in-out property <int> quality-index: 0;
+    in-out property <bool> fxaa: true;
+    in-out property <bool> pause-covered: true;
+    in-out property <int> battery-index: 1;
+    in-out property <int> saver-index: 1;
+    in property <bool> has-battery: true;
+    // settings / about
+    in-out property <bool> autostart;
+    in-out property <int> language-index;
+    in-out property <int> theme-index;
+    in property <string> library-path;
+    in property <string> library-size;
+    in property <string> version;
+    // banners and transient states
+    in property <int> info-kind;
+    in property <string> info-text;
+    in property <string> info-action;
+    in property <bool> dragging;
+    in property <bool> drag-ok: true;
+    in property <string> busy-text;
+
+    callback apply(string, int); // wallpaper id, screen index (-1 = every screen)
+    callback customize(string);
+    callback remove(string);
+    callback explorer(string);
+    callback add-files();
+    callback toggle-pause();
+    callback scene-changed();
+    callback reset-scene();
+    callback media-changed();
+    callback perf-changed();
+    callback settings-changed();
+    callback layout-changed();
+    callback identify();
+    callback screen-toggled(int, bool);
+    callback pick-for-screen();
+    callback cancel-pick();
+    callback info-action-clicked();
+    callback info-dismissed();
+    callback open-log();
+    callback open-library();
+    callback restart-engine();
+    callback quit-engine();
+    callback reset-all();
+    callback uninstall();
+    callback open-license();
+}
+
+component NavItem inherits Rectangle {
+    in property <string> icon;
+    in property <string> label;
+    in property <bool> selected;
+    callback clicked;
+    height: 36px;
+    border-radius: 4px;
+    background: root.selected ? Theme.subtle-selected : na.has-hover ? Theme.subtle-hover : transparent;
+    accessible-role: button;
+    accessible-label: root.label;
+    accessible-action-default => { root.clicked(); }
+    na := TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.clicked(); }
+    }
+    KeyFocus {
+        activated => { root.clicked(); }
+    }
+    Rectangle {
+        x: 0px;
+        width: 3px;
+        height: root.selected ? 16px : 0px;
+        y: (parent.height - self.height) / 2;
+        border-radius: 1.5px;
+        background: Theme.accent;
+    }
+    HorizontalLayout {
+        padding-left: 12px;
+        spacing: 16px;
+        Icon {
+            text: root.icon;
+            width: 20px;
+        }
+        Text {
+            text: root.label;
+            vertical-alignment: center;
+            color: Theme.text;
+            horizontal-stretch: 1;
+            overflow: elide;
+        }
+    }
+}
+
+component MenuRow inherits Rectangle {
+    in property <string> icon;
+    in property <string> text;
+    in property <bool> enabled: true;
+    callback clicked;
+    height: 32px;
+    border-radius: 4px;
+    background: mr.has-hover && root.enabled ? Theme.subtle-hover : transparent;
+    opacity: root.enabled ? 1 : 0.45;
+    accessible-role: button;
+    accessible-label: root.text;
+    accessible-action-default => {
+        if (root.enabled) {
+            root.clicked();
+        }
+    }
+    forward-focus: mk;
+    mr := TouchArea {
+        enabled: root.enabled;
+        clicked => { root.clicked(); }
+    }
+    mk := KeyFocus {
+        enabled: root.enabled;
+        activated => { root.clicked(); }
+    }
+    HorizontalLayout {
+        padding-left: 10px;
+        padding-right: 12px;
+        spacing: 12px;
+        Icon {
+            text: root.icon;
+            width: 16px;
+        }
+        Text {
+            text: root.text;
+            vertical-alignment: center;
+            color: Theme.text;
+            horizontal-stretch: 1;
+        }
+    }
+}
+
+component Thumb inherits Rectangle {
+    in property <image> source;
+    in property <bool> has-image;
+    in property <int> kind;
+    clip: true;
+    background: root.kind == 1 ? @linear-gradient(180deg, #24384A 0%, #3E6077 100%)
+        : root.kind == 2 ? @linear-gradient(180deg, #3B4A3A 0%, #62775A 100%)
+        : @linear-gradient(180deg, #3A3550 0%, #6B4A6E 100%);
+    if !root.has-image: Icon {
+        text: root.kind == 1 ? "\u{E714}" : root.kind == 2 ? "\u{E91B}" : "\u{E753}";
+        font-size: 24px;
+        color: #ffffffb0;
+    }
+    if root.has-image: Image {
+        width: parent.width;
+        height: parent.height;
+        source: root.source;
+        image-fit: cover;
+    }
+}
+
+component Tile inherits Rectangle {
+    in property <TileData> data;
+    property <length> thumb-h: root.width * 9 / 16;
+    border-radius: 8px;
+    background: ta.has-hover ? Theme.card-hover : Theme.card;
+    border-width: root.data.active ? 2px : 1px;
+    border-color: root.data.active ? Theme.accent : Theme.stroke;
+    accessible-role: button;
+    accessible-label: root.data.title + ", " + root.data.meta + (root.data.active ? ", " + root.data.active-label : "");
+    accessible-action-default => { root.activate(); }
+
+    function activate() {
+        if (State.pick-mode) {
+            State.apply(root.data.id, State.per-monitor ? State.selected-screen : -1);
+        } else if (State.per-monitor && State.screens.length > 1) {
+            menu.show();
+        } else {
+            State.apply(root.data.id, -1);
+        }
+    }
+
+    ta := TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.activate(); }
+        double-clicked => { State.customize(root.data.id); }
+        pointer-event(e) => {
+            if (e.button == PointerEventButton.right && e.kind == PointerEventKind.up) {
+                menu.show();
+            }
+        }
+    }
+    KeyFocus {
+        radius: 8px;
+        activated => { root.activate(); }
+        context => { menu.show(); }
+    }
+    VerticalLayout {
+        padding: root.data.active ? 1px : 0px;
+        Rectangle {
+            height: root.thumb-h;
+            border-top-left-radius: 7px;
+            border-top-right-radius: 7px;
+            clip: true;
+            Thumb {
+                source: root.data.thumb;
+                has-image: root.data.has-thumb;
+                kind: root.data.kind;
+            }
+            if root.data.active: Rectangle {
+                x: 8px;
+                y: 8px;
+                height: 20px;
+                width: pill.preferred-width + 16px;
+                border-radius: 10px;
+                background: Theme.accent;
+                pill := Text {
+                    text: root.data.active-label;
+                    color: Theme.accent-text;
+                    font-size: 12px;
+                    font-weight: 600;
+                }
+            }
+        }
+        HorizontalLayout {
+            padding-left: 12px;
+            padding-right: 6px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            spacing: 4px;
+            VerticalLayout {
+                horizontal-stretch: 1;
+                spacing: 2px;
+                Text {
+                    text: root.data.title;
+                    font-weight: 600;
+                    overflow: elide;
+                    color: Theme.text;
+                }
+                HorizontalLayout {
+                    spacing: 6px;
+                    Icon {
+                        text: root.data.kind == 1 ? "\u{E714}" : root.data.kind == 2 ? "\u{E91B}" : "\u{E753}";
+                        font-size: 12px;
+                        color: Theme.text2;
+                        width: 12px;
+                    }
+                    Text {
+                        text: root.data.meta;
+                        font-size: 12px;
+                        color: Theme.text2;
+                        overflow: elide;
+                        horizontal-stretch: 1;
+                    }
+                }
+            }
+            VerticalLayout {
+                alignment: center;
+                Btn {
+                    icon: "\u{E712}";
+                    subtle: true;
+                    width: 28px;
+                    height: 28px;
+                    tooltip: @tr("More options");
+                    clicked => { menu.show(); }
+                }
+            }
+        }
+    }
+    menu := PopupWindow {
+        x: root.width - 248px;
+        y: root.thumb-h + 40px;
+        width: 260px;
+        forward-focus: first-row;
+        FocusScope {
+        focus-on-tab-navigation: false;
+        focus-on-click: false;
+        key-pressed(e) => {
+            if (e.text == Key.Escape) {
+                menu.close();
+                return accept;
+            }
+            return reject;
+        }
+        Rectangle {
+            background: Theme.card;
+            border-radius: 8px;
+            border-width: 1px;
+            border-color: Theme.control-stroke;
+            drop-shadow-blur: 16px;
+            drop-shadow-color: #00000044;
+            VerticalLayout {
+                padding: 4px;
+                spacing: 0px;
+                first-row := MenuRow {
+                    icon: "\u{E7F4}";
+                    text: State.screens.length > 1 ? @tr("Apply to all screens") : @tr("Apply");
+                    clicked => {
+                        menu.close();
+                        State.apply(root.data.id, -1);
+                    }
+                }
+                if State.screens.length > 1: VerticalLayout {
+                    for s[i] in State.screens: MenuRow {
+                        icon: "\u{E7F4}";
+                        text: @tr("Screen {} · {}", s.label, s.detail);
+                        clicked => {
+                            menu.close();
+                            State.apply(root.data.id, i);
+                        }
+                    }
+                }
+                MenuRow {
+                    icon: "\u{E771}";
+                    text: @tr("Customize…");
+                    clicked => {
+                        menu.close();
+                        State.customize(root.data.id);
+                    }
+                }
+                MenuRow {
+                    icon: "\u{E838}";
+                    text: @tr("Show in Explorer");
+                    clicked => {
+                        menu.close();
+                        State.explorer(root.data.id);
+                    }
+                }
+                Rectangle {
+                    height: 9px;
+                    Rectangle {
+                        height: 1px;
+                        background: Theme.divider;
+                    }
+                }
+                MenuRow {
+                    icon: "\u{E74D}";
+                    text: @tr("Remove from library");
+                    enabled: !root.data.builtin;
+                    clicked => {
+                        menu.close();
+                        State.remove(root.data.id);
+                    }
+                }
+            }
+        }
+        }
+    }
+}
+
+component PageHeader inherits HorizontalLayout {
+    in property <string> title;
+    spacing: 12px;
+    height: 40px;
+    Text {
+        text: root.title;
+        font-size: 28px;
+        font-weight: 600;
+        color: Theme.text;
+        vertical-alignment: center;
+        horizontal-stretch: 1;
+        overflow: elide;
+    }
+    @children
+}
+
+// ---------------------------------------------------------------- pages
+
+component LibraryPage inherits Rectangle {
+    property <length> gap: 12px;
+    property <int> cols: max(1, Math.floor((sv.visible-width - 24px + root.gap) / (200px + root.gap)));
+    property <length> tile-w: (sv.visible-width - 48px - (root.cols - 1) * root.gap) / root.cols;
+    property <length> tile-h: root.tile-w * 9 / 16 + 58px;
+    property <int> count: State.tiles.length + 1;
+    VerticalLayout {
+        if State.pick-mode: Rectangle {
+            height: 48px;
+            background: Theme.accent-tint;
+            HorizontalLayout {
+                padding-left: 24px;
+                padding-right: 16px;
+                spacing: 12px;
+                Icon {
+                    text: "\u{E7F4}";
+                    width: 16px;
+                    color: Theme.accent;
+                }
+                Text {
+                    text: State.per-monitor ? @tr("Choose a wallpaper for screen {}", State.selected-screen + 1) : @tr("Choose a wallpaper for all screens");
+                    vertical-alignment: center;
+                    color: Theme.text;
+                    horizontal-stretch: 1;
+                }
+                VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        text: @tr("Cancel");
+                        clicked => { State.cancel-pick(); }
+                    }
+                }
+            }
+        }
+        HorizontalLayout {
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-top: 20px;
+            padding-bottom: 16px;
+            PageHeader {
+                title: @tr("Library");
+                VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        primary: true;
+                        icon: "\u{E710}";
+                        text: State.busy-text != "" ? State.busy-text : @tr("Add");
+                        enabled: State.busy-text == "";
+                        clicked => { State.add-files(); }
+                    }
+                }
+            }
+        }
+        sv := ScrollView {
+            vertical-stretch: 1;
+            content-width: self.visible-width;
+            content-height: Math.ceil(root.count / root.cols) * (root.tile-h + root.gap) + 12px;
+            for t[i] in State.tiles: Tile {
+                x: 24px + Math.mod(i, root.cols) * (root.tile-w + root.gap);
+                y: Math.floor(i / root.cols) * (root.tile-h + root.gap);
+                width: root.tile-w;
+                height: root.tile-h;
+                data: t;
+            }
+            Rectangle {
+                x: 24px + Math.mod(State.tiles.length, root.cols) * (root.tile-w + root.gap);
+                y: Math.floor(State.tiles.length / root.cols) * (root.tile-h + root.gap);
+                width: root.tile-w;
+                height: root.tile-h;
+                border-radius: 8px;
+                border-width: 2px;
+                border-color: at.has-hover ? Theme.accent : Theme.control-stroke;
+                background: at.has-hover ? Theme.accent-tint : transparent;
+                accessible-role: button;
+                accessible-label: @tr("Add");
+                accessible-action-default => { State.add-files(); }
+                at := TouchArea {
+                    mouse-cursor: pointer;
+                    clicked => { State.add-files(); }
+                }
+                KeyFocus {
+                    radius: 8px;
+                    activated => { State.add-files(); }
+                }
+                VerticalLayout {
+                    alignment: center;
+                    spacing: 8px;
+                    padding: 16px;
+                    Icon {
+                        text: "\u{E710}";
+                        font-size: 24px;
+                        color: Theme.text2;
+                    }
+                    Text {
+                        text: @tr("Drop a video, picture or .kumo file here, or click");
+                        horizontal-alignment: center;
+                        wrap: word-wrap;
+                        font-size: 12px;
+                        color: Theme.text2;
+                    }
+                }
+            }
+        }
+        if !State.pick-mode: Rectangle {
+            height: 56px;
+            background: Theme.bg-layer;
+            Rectangle {
+                y: 0px;
+                height: 1px;
+                background: Theme.divider;
+            }
+            HorizontalLayout {
+                padding-left: 24px;
+                padding-right: 16px;
+                spacing: 12px;
+                VerticalLayout {
+                    alignment: center;
+                    Rectangle {
+                        width: 64px;
+                        height: 36px;
+                        border-radius: 4px;
+                        clip: true;
+                        Thumb {
+                            source: State.now-thumb;
+                            has-image: State.now-has-thumb;
+                            kind: State.now-kind;
+                        }
+                    }
+                }
+                VerticalLayout {
+                    alignment: center;
+                    horizontal-stretch: 1;
+                    Text {
+                        text: State.now-title;
+                        font-weight: 600;
+                        color: Theme.text;
+                        overflow: elide;
+                    }
+                    Text {
+                        text: State.paused ? @tr("Paused") : State.now-sub;
+                        font-size: 12px;
+                        color: Theme.text2;
+                        overflow: elide;
+                    }
+                }
+                VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        icon: State.per-monitor ? "\u{E7F4}" : "\u{E771}";
+                        text: State.per-monitor ? @tr("Screens") : @tr("Customize");
+                        clicked => {
+                            if (State.per-monitor) {
+                                State.page = 2;
+                            } else {
+                                State.customize("");
+                            }
+                        }
+                    }
+                }
+                VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        icon: State.paused ? "\u{E768}" : "\u{E769}";
+                        tooltip: State.paused ? @tr("Resume") : @tr("Pause");
+                        clicked => { State.toggle-pause(); }
+                    }
+                }
+            }
+        }
+    }
+}
+
+component DetailPage inherits Rectangle {
+    ScrollView {
+        VerticalLayout {
+            alignment: start;
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-top: 20px;
+            padding-bottom: 24px;
+            spacing: 4px;
+            HorizontalLayout {
+                height: 40px;
+                spacing: 8px;
+                VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        icon: "\u{E72B}";
+                        subtle: true;
+                        tooltip: @tr("Back");
+                        clicked => { State.page = 0; }
+                    }
+                }
+                LinkBtn {
+                    text: @tr("Library");
+                    font-size: 28px;
+                    font-weight: 600;
+                    color: Theme.text2;
+                    clicked => { State.page = 0; }
+                }
+                Icon {
+                    text: "\u{E76C}";
+                    font-size: 12px;
+                    color: Theme.text2;
+                }
+                Text {
+                    text: State.detail.title;
+                    font-size: 28px;
+                    font-weight: 600;
+                    color: Theme.text;
+                    vertical-alignment: center;
+                    overflow: elide;
+                    horizontal-stretch: 1;
+                }
+            }
+            Rectangle { height: 12px; }
+            HorizontalLayout {
+                spacing: 20px;
+                Rectangle {
+                    width: 256px;
+                    height: 144px;
+                    border-radius: 8px;
+                    clip: true;
+                    border-width: 1px;
+                    border-color: Theme.stroke;
+                    Thumb {
+                        source: State.detail.thumb;
+                        has-image: State.detail.has-thumb;
+                        kind: State.detail.kind;
+                    }
+                }
+                VerticalLayout {
+                    spacing: 6px;
+                    horizontal-stretch: 1;
+                    alignment: start;
+                    Text {
+                        text: State.detail.title;
+                        font-size: 20px;
+                        font-weight: 600;
+                        color: Theme.text;
+                        overflow: elide;
+                    }
+                    GridLayout {
+                        spacing-horizontal: 16px;
+                        spacing-vertical: 4px;
+                        Row {
+                            Text { text: @tr("Type"); font-size: 12px; color: Theme.text2; width: 72px; }
+                            Text { text: State.detail-type; font-size: 12px; color: Theme.text; }
+                        }
+                        Row {
+                            Text { text: @tr("Source"); font-size: 12px; color: Theme.text2; width: 72px; }
+                            Text { text: State.detail-source; font-size: 12px; color: Theme.text; overflow: elide; }
+                        }
+                        Row {
+                            Text { text: @tr("Memory"); font-size: 12px; color: Theme.text2; width: 72px; }
+                            Text { text: State.detail-memory; font-size: 12px; color: Theme.text; wrap: word-wrap; }
+                        }
+                        Row {
+                            Text { text: @tr("Status"); font-size: 12px; color: Theme.text2; width: 72px; }
+                            Text { text: State.detail-status; font-size: 12px; color: Theme.text; wrap: word-wrap; }
+                        }
+                    }
+                }
+            }
+            HorizontalLayout {
+                spacing: 8px;
+                alignment: start;
+                padding-top: 12px;
+                Btn {
+                    primary: true;
+                    text: State.per-monitor && State.screens.length > 1 ? @tr("All screens") : @tr("Apply");
+                    clicked => { State.apply(State.detail.id, -1); }
+                }
+                if State.per-monitor && State.screens.length > 1: HorizontalLayout {
+                    spacing: 8px;
+                    for s[i] in State.screens: Btn {
+                        text: @tr("Screen {}", s.label);
+                        clicked => { State.apply(State.detail.id, i); }
+                    }
+                }
+                Btn {
+                    icon: "\u{E838}";
+                    text: @tr("Show in Explorer");
+                    clicked => { State.explorer(State.detail.id); }
+                }
+                if !State.detail.builtin: Btn {
+                    icon: "\u{E74D}";
+                    subtle: true;
+                    text: @tr("Remove");
+                    clicked => { State.remove(State.detail.id); }
+                }
+            }
+            Rectangle { height: 20px; }
+            HorizontalLayout {
+                spacing: 12px;
+                alignment: start;
+                SectionTitle { text: @tr("Customize"); }
+                Text {
+                    text: @tr("Changes show on the desktop right away.");
+                    font-size: 12px;
+                    color: Theme.text2;
+                    vertical-alignment: center;
+                }
+            }
+            Rectangle { height: 4px; }
+            if State.detail.kind == 0: VerticalLayout {
+                spacing: 4px;
+                Card {
+                    icon: "\u{E823}";
+                    title: @tr("Time of day");
+                    description: State.time-mode == 0 ? @tr("Follows your clock: sunrise, sunset, stars at night.") : "";
+                    VerticalLayout {
+                        alignment: center;
+                        Segmented {
+                            items: [@tr("Real time"), @tr("Fixed"), @tr("Time-lapse")];
+                            selected <=> State.time-mode;
+                            picked => { State.scene-changed(); }
+                        }
+                    }
+                }
+                if State.time-mode == 1: Card {
+                    title: @tr("Time");
+                    description: @tr("Morning 7:30 · Noon 12:30 · Sunset 18:36 · Night 22:00");
+                    HorizontalLayout {
+                        spacing: 12px;
+                        SliderX {
+                            label: @tr("Time");
+                            minimum: 0;
+                            maximum: 23.75;
+                            step: 0.25;
+                            value <=> State.hour;
+                            released => { State.scene-changed(); }
+                        }
+                        Text {
+                            width: 48px;
+                            vertical-alignment: center;
+                            color: Theme.text;
+                            text: Math.floor(State.hour) + ":" + (Math.round(Math.mod(State.hour, 1) * 60) < 10 ? "0" : "") + Math.round(Math.mod(State.hour, 1) * 60);
+                        }
+                    }
+                }
+                if State.time-mode == 2: Card {
+                    title: @tr("Speed");
+                    VerticalLayout {
+                        alignment: center;
+                        ComboBox {
+                            width: 230px;
+                            model: [@tr("1 day in 24 min (60×)"), @tr("1 day in 6 min (240×)"), @tr("1 day in 2.4 min (600×)"), @tr("1 day in 36 s (2400×)")];
+                            current-index <=> State.lapse-index;
+                            selected => { State.scene-changed(); }
+                        }
+                    }
+                }
+                Card {
+                    icon: "\u{E7AD}";
+                    title: @tr("Camera orbit");
+                    description: @tr("0 = stands still");
+                    HorizontalLayout {
+                        spacing: 12px;
+                        SliderX {
+                            label: @tr("Camera orbit");
+                            minimum: 0;
+                            maximum: 3;
+                            step: 0.25;
+                            value <=> State.rotate;
+                            released => { State.scene-changed(); }
+                        }
+                        Text {
+                            width: 48px;
+                            vertical-alignment: center;
+                            color: Theme.text;
+                            text: State.rotate + "×";
+                        }
+                    }
+                }
+                Card {
+                    icon: "\u{E8BE}";
+                    title: @tr("Cherry blossoms");
+                    VerticalLayout {
+                        alignment: center;
+                        Segmented {
+                            items: [@tr("None"), @tr("Few"), @tr("Normal"), @tr("Many")];
+                            selected <=> State.petals-index;
+                            picked => { State.scene-changed(); }
+                        }
+                    }
+                }
+                Card {
+                    icon: "\u{E962}";
+                    title: @tr("Parallax");
+                    description: @tr("The camera follows the mouse a little.");
+                    Toggle {
+                        label: @tr("Parallax");
+                        checked <=> State.parallax;
+                        toggled => { State.scene-changed(); }
+                    }
+                }
+                HorizontalLayout {
+                    padding-top: 8px;
+                    alignment: start;
+                    LinkBtn {
+                        text: @tr("Reset to defaults");
+                        clicked => { State.reset-scene(); }
+                    }
+                }
+            }
+            if State.detail.kind != 0: VerticalLayout {
+                spacing: 4px;
+                Card {
+                    icon: "\u{E740}";
+                    title: @tr("Fit");
+                    description: @tr("How the picture fills screens with a different shape.");
+                    VerticalLayout {
+                        alignment: center;
+                        ComboBox {
+                            width: 220px;
+                            model: [@tr("Fill (crop)"), @tr("Fit (bars)"), @tr("Stretch")];
+                            current-index <=> State.fit-index;
+                            selected => { State.media-changed(); }
+                        }
+                    }
+                }
+                if State.detail.kind == 1: Card {
+                    icon: "\u{EC4A}";
+                    title: @tr("Playback speed");
+                    VerticalLayout {
+                        alignment: center;
+                        Segmented {
+                            items: ["0.5×", "1×", "1.5×", "2×"];
+                            selected <=> State.speed-index;
+                            picked => { State.media-changed(); }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+component DisplaysPage inherits Rectangle {
+    property <length> canvas-w: 400px;
+    function screen-pick(i: int, off: bool) {
+        State.selected-screen = i;
+        State.screen-on = !off;
+    }
+    ScrollView {
+        VerticalLayout {
+            alignment: start;
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-top: 20px;
+            padding-bottom: 24px;
+            spacing: 4px;
+            PageHeader {
+                title: @tr("Screens");
+                if State.screens.length > 1: VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        icon: "\u{E7F4}";
+                        text: @tr("Identify");
+                        clicked => { State.identify(); }
+                    }
+                }
+            }
+            Rectangle { height: 12px; }
+            if State.screens.length > 1: Card {
+                icon: "\u{E7F4}";
+                title: @tr("Wallpaper on several screens");
+                description: @tr("“Same everywhere” uses the least memory: screens with the same shape share one picture.");
+                VerticalLayout {
+                    alignment: center;
+                    Segmented {
+                        items: [@tr("Same everywhere"), @tr("Per screen")];
+                        selected: State.per-monitor ? 1 : 0;
+                        picked(i) => {
+                            State.per-monitor = i == 1;
+                            State.layout-changed();
+                        }
+                    }
+                }
+            }
+            if State.screens.length <= 1: Text {
+                text: @tr("Connect a second screen to give it its own wallpaper.");
+                font-size: 12px;
+                color: Theme.text2;
+            }
+            Rectangle { height: 4px; }
+            canvas := Rectangle {
+                height: 200px;
+                border-radius: 8px;
+                background: Theme.card;
+                border-width: 1px;
+                border-color: Theme.stroke;
+                property <length> aw: self.width - 40px;
+                property <length> ah: self.height - 40px;
+                property <bool> wide: self.aw / self.ah > State.layout-aspect;
+                property <length> bw: self.wide ? self.ah * State.layout-aspect : self.aw;
+                property <length> bh: self.wide ? self.ah : self.aw / State.layout-aspect;
+                property <length> ox: (self.width - self.bw) / 2;
+                property <length> oy: (self.height - self.bh) / 2;
+                for s[i] in State.screens: Rectangle {
+                    x: canvas.ox + s.fx * canvas.bw + 2px;
+                    y: canvas.oy + s.fy * canvas.bh + 2px;
+                    width: s.fw * canvas.bw - 4px;
+                    height: s.fh * canvas.bh - 4px;
+                    border-radius: 4px;
+                    clip: true;
+                    border-width: i == State.selected-screen ? 2px : 1px;
+                    border-color: i == State.selected-screen ? Theme.accent : Theme.control-stroke;
+                    accessible-role: button;
+                    accessible-label: @tr("Screen {}", s.label);
+                    accessible-action-default => { screen-pick(i, s.off); }
+                    Thumb {
+                        source: s.thumb;
+                        has-image: s.has-thumb;
+                        kind: s.kind;
+                    }
+                    Rectangle {
+                        x: 8px;
+                        y: parent.height - 32px;
+                        width: 24px;
+                        height: 24px;
+                        border-radius: 12px;
+                        background: i == State.selected-screen ? Theme.accent : Theme.strong;
+                        Text {
+                            text: s.label;
+                            font-weight: 600;
+                            color: i == State.selected-screen ? Theme.accent-text : Theme.text;
+                        }
+                    }
+                    if s.off: Rectangle {
+                        x: parent.width - self.width - 8px;
+                        y: 8px;
+                        height: 20px;
+                        width: cp.preferred-width + 16px;
+                        border-radius: 10px;
+                        background: #000000a0;
+                        cp := Text {
+                            text: @tr("Off");
+                            font-size: 12px;
+                            color: white;
+                        }
+                    }
+                    TouchArea {
+                        mouse-cursor: pointer;
+                        clicked => { screen-pick(i, s.off); }
+                    }
+                    KeyFocus {
+                        activated => { screen-pick(i, s.off); }
+                    }
+                }
+            }
+            Rectangle { height: 16px; }
+            if State.screens.length > 0: VerticalLayout {
+                spacing: 4px;
+                HorizontalLayout {
+                    spacing: 6px;
+                    alignment: start;
+                    SectionTitle { text: @tr("Screen {}", State.screens[State.selected-screen].label); }
+                    if State.screens[State.selected-screen].primary: Text {
+                        text: "· " + @tr("Main screen");
+                        color: Theme.text2;
+                    }
+                }
+                Text {
+                    text: State.screens[State.selected-screen].name + " · " + State.screens[State.selected-screen].detail;
+                    font-size: 12px;
+                    color: Theme.text2;
+                }
+                Rectangle { height: 4px; }
+                Card {
+                    title: State.per-monitor ? @tr("Wallpaper") : @tr("Wallpaper (all screens)");
+                    description: State.screens[State.selected-screen].wallpaper;
+                    HorizontalLayout {
+                        spacing: 12px;
+                        horizontal-stretch: 0;
+                        VerticalLayout {
+                            alignment: center;
+                            Rectangle {
+                                width: 80px;
+                                height: 45px;
+                                border-radius: 4px;
+                                clip: true;
+                                Thumb {
+                                    source: State.screens[State.selected-screen].thumb;
+                                    has-image: State.screens[State.selected-screen].has-thumb;
+                                    kind: State.screens[State.selected-screen].kind;
+                                }
+                            }
+                        }
+                        VerticalLayout {
+                            alignment: center;
+                            Btn {
+                                text: @tr("Change…");
+                                clicked => { State.pick-for-screen(); }
+                            }
+                        }
+                    }
+                }
+                Card {
+                    title: @tr("Live wallpaper on this screen");
+                    description: @tr("Off: Windows shows its normal wallpaper here.");
+                    Toggle {
+                        label: @tr("Live wallpaper on this screen");
+                        checked <=> State.screen-on;
+                        toggled(on) => { State.screen-toggled(State.selected-screen, on); }
+                    }
+                }
+            }
+        }
+    }
+}
+
+component PerformancePage inherits Rectangle {
+    ScrollView {
+        VerticalLayout {
+            alignment: start;
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-top: 20px;
+            padding-bottom: 24px;
+            spacing: 4px;
+            PageHeader { title: @tr("Playback & performance"); }
+            Rectangle { height: 12px; }
+            Rectangle {
+                border-radius: 8px;
+                background: Theme.card;
+                border-width: 1px;
+                border-color: Theme.stroke;
+                VerticalLayout {
+                    padding: 20px;
+                    spacing: 10px;
+                    HorizontalLayout {
+                        spacing: 32px;
+                        VerticalLayout {
+                            Text {
+                                text: State.ram;
+                                font-size: 40px;
+                                font-weight: 600;
+                                color: Theme.text;
+                            }
+                            Text {
+                                text: @tr("Memory used by the wallpaper");
+                                font-size: 12px;
+                                color: Theme.text2;
+                            }
+                        }
+                        VerticalLayout {
+                            alignment: end;
+                            Text {
+                                text: State.cpu;
+                                font-weight: 600;
+                                color: Theme.text;
+                            }
+                            Text {
+                                text: @tr("CPU");
+                                font-size: 12px;
+                                color: Theme.text2;
+                            }
+                        }
+                        Rectangle { horizontal-stretch: 1; }
+                        VerticalLayout {
+                            alignment: center;
+                            spacing: 8px;
+                            HorizontalLayout {
+                                spacing: 8px;
+                                alignment: end;
+                                VerticalLayout {
+                                    alignment: center;
+                                    Rectangle {
+                                        width: 8px;
+                                        height: 8px;
+                                        border-radius: 4px;
+                                        background: !State.running ? Theme.critical : State.paused ? Theme.text3 : Theme.success;
+                                    }
+                                }
+                                Text {
+                                    text: !State.running ? @tr("Not running") : State.paused ? @tr("Paused") : @tr("Running");
+                                    color: Theme.text;
+                                }
+                            }
+                            Btn {
+                                icon: State.paused ? "\u{E768}" : "\u{E769}";
+                                text: State.paused ? @tr("Resume") : @tr("Pause");
+                                enabled: State.running;
+                                clicked => { State.toggle-pause(); }
+                            }
+                        }
+                    }
+                    Text {
+                        text: @tr("This window needs another {} and quits completely when you close it.", State.panel-ram);
+                        font-size: 12px;
+                        color: Theme.text2;
+                        wrap: word-wrap;
+                    }
+                }
+            }
+            Rectangle { height: 20px; }
+            SectionTitle { text: @tr("Picture"); }
+            Rectangle { height: 4px; }
+            Card {
+                icon: "\u{EC4A}";
+                title: @tr("Frame rate");
+                description: @tr("30 fps looks smooth for wallpapers and needs about half the graphics power of 60.");
+                VerticalLayout {
+                    alignment: center;
+                    Segmented {
+                        items: ["15", "30", "60"];
+                        selected <=> State.fps-index;
+                        picked => { State.perf-changed(); }
+                    }
+                }
+            }
+            Card {
+                icon: "\u{E8A9}";
+                title: @tr("Render resolution");
+                description: @tr("Lower saves graphics power; the picture gets a little softer.");
+                VerticalLayout {
+                    alignment: center;
+                    Segmented {
+                        items: [@tr("High"), @tr("Balanced"), @tr("Efficient")];
+                        selected <=> State.quality-index;
+                        picked => { State.perf-changed(); }
+                    }
+                }
+            }
+            Card {
+                icon: "\u{E8A9}";
+                title: @tr("Edge smoothing (FXAA)");
+                description: @tr("Smooths jagged edges. Costs very little.");
+                Toggle {
+                    label: @tr("Edge smoothing (FXAA)");
+                    checked <=> State.fxaa;
+                    toggled => { State.perf-changed(); }
+                }
+            }
+            Rectangle { height: 20px; }
+            SectionTitle { text: @tr("Pause automatically"); }
+            Rectangle { height: 4px; }
+            Card {
+                icon: "\u{E740}";
+                title: @tr("When windows cover a screen");
+                description: @tr("A screen covered by a maximized or full-screen window is not drawn.");
+                Toggle {
+                    label: @tr("When windows cover a screen");
+                    checked <=> State.pause-covered;
+                    toggled => { State.perf-changed(); }
+                }
+            }
+            if State.has-battery: Card {
+                icon: "\u{E855}";
+                title: @tr("On battery");
+                VerticalLayout {
+                    alignment: center;
+                    ComboBox {
+                        width: 220px;
+                        model: [@tr("Keep running"), @tr("Halve the frame rate"), @tr("Pause")];
+                        current-index <=> State.battery-index;
+                        selected => { State.perf-changed(); }
+                    }
+                }
+            }
+            Card {
+                icon: "\u{E863}";
+                title: @tr("With energy saver");
+                VerticalLayout {
+                    alignment: center;
+                    ComboBox {
+                        width: 220px;
+                        model: [@tr("Keep running"), @tr("Halve the frame rate"), @tr("Pause")];
+                        current-index <=> State.saver-index;
+                        selected => { State.perf-changed(); }
+                    }
+                }
+            }
+            HorizontalLayout {
+                padding-top: 8px;
+                spacing: 8px;
+                Icon {
+                    text: "\u{E72E}";
+                    font-size: 12px;
+                    color: Theme.text2;
+                    width: 12px;
+                }
+                Text {
+                    text: @tr("Always paused: locked PC, display off, Remote Desktop.");
+                    font-size: 12px;
+                    color: Theme.text2;
+                    wrap: word-wrap;
+                    horizontal-stretch: 1;
+                }
+            }
+        }
+    }
+}
+
+component SettingsPage inherits Rectangle {
+    ScrollView {
+        VerticalLayout {
+            alignment: start;
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-top: 20px;
+            padding-bottom: 24px;
+            spacing: 4px;
+            PageHeader { title: @tr("Settings"); }
+            Rectangle { height: 12px; }
+            SectionTitle { text: @tr("General"); }
+            Rectangle { height: 4px; }
+            Card {
+                icon: "\u{E7E8}";
+                title: @tr("Start with Windows");
+                description: @tr("Kumo starts quietly in the background after you sign in.");
+                Toggle {
+                    label: @tr("Start with Windows");
+                    checked <=> State.autostart;
+                    toggled => { State.settings-changed(); }
+                }
+            }
+            Card {
+                icon: "\u{E774}";
+                title: @tr("Language");
+                description: @tr("For this window and the menu in the notification area.");
+                VerticalLayout {
+                    alignment: center;
+                    ComboBox {
+                        width: 180px;
+                        model: [@tr("Same as Windows"), "Deutsch", "English"];
+                        current-index <=> State.language-index;
+                        selected => { State.settings-changed(); }
+                    }
+                }
+            }
+            Card {
+                icon: "\u{E790}";
+                title: @tr("Color mode");
+                VerticalLayout {
+                    alignment: center;
+                    ComboBox {
+                        width: 180px;
+                        model: [@tr("Same as Windows"), @tr("Light"), @tr("Dark")];
+                        current-index <=> State.theme-index;
+                        selected => { State.settings-changed(); }
+                    }
+                }
+            }
+            Rectangle { height: 20px; }
+            SectionTitle { text: @tr("Library"); }
+            Rectangle { height: 4px; }
+            Card {
+                icon: "\u{E8B7}";
+                title: @tr("Storage location");
+                description: @tr("{} · {} in use", State.library-path, State.library-size);
+                VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        text: @tr("Open folder");
+                        clicked => { State.open-library(); }
+                    }
+                }
+            }
+            Rectangle { height: 20px; }
+            SectionTitle { text: @tr("Troubleshooting"); }
+            Rectangle { height: 4px; }
+            Card {
+                icon: "\u{E9D9}";
+                title: @tr("Log file");
+                description: @tr("Helpful for bug reports.");
+                VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        text: @tr("Open");
+                        clicked => { State.open-log(); }
+                    }
+                }
+            }
+            Card {
+                icon: "\u{E72C}";
+                title: @tr("Restart Kumo");
+                description: @tr("Restarts the wallpaper without signing out.");
+                VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        text: @tr("Restart");
+                        clicked => { State.restart-engine(); }
+                    }
+                }
+            }
+            Card {
+                icon: "\u{E7E8}";
+                title: @tr("Quit Kumo");
+                description: @tr("Stops the wallpaper until the next start.");
+                VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        text: @tr("Quit");
+                        clicked => { State.quit-engine(); }
+                    }
+                }
+            }
+            Card {
+                icon: "\u{E777}";
+                title: @tr("Reset all settings");
+                description: @tr("Frame rate, quality, pause rules, screens and what you customized go back to the defaults. Your library stays.");
+                VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        text: @tr("Reset…");
+                        clicked => { State.reset-all(); }
+                    }
+                }
+            }
+            Card {
+                icon: "\u{E74D}";
+                title: @tr("Uninstall Kumo");
+                description: @tr("Removes Kumo from this PC. You decide what happens to your wallpapers.");
+                VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        text: @tr("Uninstall…");
+                        clicked => { State.uninstall(); }
+                    }
+                }
+            }
+        }
+    }
+}
+
+component AboutPage inherits Rectangle {
+    ScrollView {
+        VerticalLayout {
+            alignment: start;
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-top: 20px;
+            padding-bottom: 24px;
+            spacing: 4px;
+            PageHeader { title: @tr("About Kumo"); }
+            Rectangle { height: 12px; }
+            Rectangle {
+                border-radius: 8px;
+                background: Theme.card;
+                border-width: 1px;
+                border-color: Theme.stroke;
+                HorizontalLayout {
+                    padding: 20px;
+                    spacing: 20px;
+                    Image {
+                        width: 64px;
+                        height: 64px;
+                        source: @image-url("../assets/kumo-icon.png");
+                    }
+                    VerticalLayout {
+                        alignment: center;
+                        spacing: 4px;
+                        Text {
+                            text: "Kumo";
+                            font-size: 28px;
+                            font-weight: 600;
+                            color: Theme.text;
+                        }
+                        Text {
+                            text: @tr("Version {}", State.version);
+                            font-size: 12px;
+                            color: Theme.text2;
+                        }
+                        Text {
+                            text: @tr("Lightweight live wallpapers for Windows. 雲 (kumo) is Japanese for “cloud”.");
+                            wrap: word-wrap;
+                            color: Theme.text;
+                        }
+                    }
+                }
+            }
+            Rectangle { height: 8px; }
+            Card {
+                icon: "\u{E943}";
+                title: @tr("License");
+                description: @tr("Free software under the GNU GPL v3. Built with Slint (GPL v3).");
+                VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        text: @tr("Show");
+                        clicked => { State.open-license(); }
+                    }
+                }
+            }
+            Card {
+                icon: "\u{E74D}";
+                title: @tr("Uninstall Kumo");
+                description: @tr("Removes Kumo from this PC. You decide what happens to your wallpapers.");
+                VerticalLayout {
+                    alignment: center;
+                    Btn {
+                        text: @tr("Uninstall…");
+                        clicked => { State.uninstall(); }
+                    }
+                }
+            }
+            Rectangle { height: 8px; }
+            Text {
+                text: @tr("No account, no ads, no telemetry.");
+                font-size: 12px;
+                color: Theme.text2;
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------- window
+
+export component PanelWindow inherits Window {
+    title: "Kumo";
+    icon: @image-url("../assets/kumo-icon.png");
+    preferred-width: 960px;
+    preferred-height: 640px;
+    min-width: 720px;
+    min-height: 520px;
+    default-font-family: Theme.ui-font;
+    default-font-size: 14px;
+    background: Theme.bg-base;
+    forward-focus: keys;
+
+    public function set-dark(dark: bool) {
+        Palette.color-scheme = dark ? ColorScheme.dark : ColorScheme.light;
+    }
+
+    function go(page: int) {
+        State.pick-mode = false;
+        State.page = page;
+    }
+
+    keys := FocusScope {
+    focus-on-tab-navigation: false;
+    focus-on-click: false;
+    key-pressed(e) => {
+        if (e.text == Key.Escape && State.pick-mode) {
+            State.cancel-pick();
+            return accept;
+        }
+        if (e.text == Key.Escape && State.page == 1) {
+            State.page = 0;
+            return accept;
+        }
+        if (e.modifiers.control) {
+            if (e.text == "1" || e.text == "2" || e.text == "3") {
+                root.go(e.text == "1" ? 0 : e.text == "2" ? 2 : 3);
+                return accept;
+            }
+            if (e.text == ",") {
+                root.go(4);
+                return accept;
+            }
+            if (e.text == "o") {
+                State.add-files();
+                return accept;
+            }
+        }
+        return reject;
+    }
+    HorizontalLayout {
+        // sidebar
+        VerticalLayout {
+            width: 216px;
+            padding: 4px;
+            padding-top: 12px;
+            spacing: 2px;
+            HorizontalLayout {
+                height: 40px;
+                padding-left: 12px;
+                spacing: 12px;
+                VerticalLayout {
+                    alignment: center;
+                    Image {
+                        width: 24px;
+                        height: 24px;
+                        source: @image-url("../assets/kumo-icon.png");
+                    }
+                }
+                Text {
+                    text: "Kumo";
+                    font-size: 16px;
+                    font-weight: 600;
+                    vertical-alignment: center;
+                    color: Theme.text;
+                    horizontal-stretch: 1;
+                }
+            }
+            Rectangle { height: 8px; }
+            NavItem {
+                icon: "\u{E8F1}";
+                label: @tr("Library");
+                selected: State.page <= 1;
+                clicked => { root.go(0); }
+            }
+            NavItem {
+                icon: "\u{E7F4}";
+                label: @tr("Screens");
+                selected: State.page == 2;
+                clicked => { root.go(2); }
+            }
+            NavItem {
+                icon: "\u{EC4A}";
+                label: @tr("Playback & performance");
+                selected: State.page == 3;
+                clicked => { root.go(3); }
+            }
+            Rectangle { vertical-stretch: 1; }
+            // status chip
+            Rectangle {
+                height: 32px;
+                border-radius: 4px;
+                background: sc.has-hover ? Theme.subtle-hover : transparent;
+                accessible-role: button;
+                accessible-label: !State.running ? @tr("Not running") : State.paused ? @tr("Paused") : @tr("Running");
+                accessible-action-default => { root.go(3); }
+                sc := TouchArea {
+                    mouse-cursor: pointer;
+                    clicked => { root.go(3); }
+                }
+                HorizontalLayout {
+                    padding-left: 16px;
+                    spacing: 10px;
+                    VerticalLayout {
+                        alignment: center;
+                        Rectangle {
+                            width: 8px;
+                            height: 8px;
+                            border-radius: 4px;
+                            background: !State.running ? Theme.critical : State.paused ? Theme.text3 : Theme.success;
+                        }
+                    }
+                    Text {
+                        text: (!State.running ? @tr("Not running") : State.paused ? @tr("Paused") : @tr("Running")) + (State.running ? " · " + State.ram : "");
+                        font-size: 12px;
+                        color: Theme.text2;
+                        vertical-alignment: center;
+                    }
+                }
+            }
+            Rectangle {
+                height: 9px;
+                Rectangle {
+                    height: 1px;
+                    width: parent.width - 24px;
+                    background: Theme.divider;
+                }
+            }
+            NavItem {
+                icon: "\u{E713}";
+                label: @tr("Settings");
+                selected: State.page == 4;
+                clicked => { root.go(4); }
+            }
+            NavItem {
+                icon: "\u{E946}";
+                label: @tr("About Kumo");
+                selected: State.page == 5;
+                clicked => { root.go(5); }
+            }
+            Rectangle { height: 8px; }
+        }
+        // content layer
+        Rectangle {
+            background: Theme.bg-layer;
+            border-top-left-radius: 8px;
+            border-width: 1px;
+            border-color: Theme.stroke;
+            clip: true;
+            VerticalLayout {
+                if State.info-kind > 1 || (State.info-kind == 1 && State.page == 0): HorizontalLayout {
+                    padding-left: 24px;
+                    padding-right: 24px;
+                    padding-top: 16px;
+                    InfoBar {
+                        kind: State.info-kind;
+                        message: State.info-text;
+                        action: State.info-action;
+                        action-clicked => { State.info-action-clicked(); }
+                        dismissed => { State.info-dismissed(); }
+                    }
+                }
+                if State.page == 0: LibraryPage { vertical-stretch: 1; }
+                if State.page == 1: DetailPage { vertical-stretch: 1; }
+                if State.page == 2: DisplaysPage { vertical-stretch: 1; }
+                if State.page == 3: PerformancePage { vertical-stretch: 1; }
+                if State.page == 4: SettingsPage { vertical-stretch: 1; }
+                if State.page == 5: AboutPage { vertical-stretch: 1; }
+            }
+            if State.dragging: Rectangle {
+                background: State.drag-ok ? Theme.accent-tint : Theme.critical-bg;
+                Rectangle {
+                    x: 12px;
+                    y: 12px;
+                    width: parent.width - 24px;
+                    height: parent.height - 24px;
+                    border-radius: 8px;
+                    border-width: 2px;
+                    border-color: State.drag-ok ? Theme.accent : Theme.critical;
+                    VerticalLayout {
+                        alignment: center;
+                        spacing: 8px;
+                        Icon {
+                            text: State.drag-ok ? "\u{E896}" : "\u{E783}";
+                            font-size: 48px;
+                            color: State.drag-ok ? Theme.accent : Theme.critical;
+                        }
+                        Text {
+                            text: State.drag-ok ? @tr("Release to add") : @tr("This format is not supported");
+                            font-size: 20px;
+                            font-weight: 600;
+                            horizontal-alignment: center;
+                            color: Theme.text;
+                        }
+                        Text {
+                            text: "MP4 · WebM · MKV · JPG · PNG · WebP · BMP · .kumo";
+                            font-size: 12px;
+                            horizontal-alignment: center;
+                            color: Theme.text2;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    }
+}
+
+// The big number on each screen while "Identify" runs.
+export component IdentifyWindow inherits Window {
+    in property <string> label;
+    no-frame: true;
+    always-on-top: true;
+    width: 160px;
+    height: 160px;
+    background: Theme.accent;
+    Text {
+        text: root.label;
+        font-size: 96px;
+        font-weight: 600;
+        color: Theme.accent-text;
+    }
+}

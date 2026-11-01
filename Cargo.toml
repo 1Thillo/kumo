@@ -1,0 +1,71 @@
+[package]
+name = "kumo"
+version = "0.2.3"
+edition = "2021"
+description = "A tiny, resource-friendly live wallpaper engine for Windows (Direct3D 11, no browser)"
+readme = "README.md"
+license = "GPL-3.0-only"
+
+[build-dependencies]
+slint-build = "=1.18.1"
+windows = { version = "0.58", features = ["Win32_Graphics_Direct3D", "Win32_Graphics_Direct3D_Fxc"] }
+
+[dependencies]
+# control panel and setup wizard: software renderer only (no GPU context, ~15 MB while open)
+slint = { version = "=1.18.1", default-features = false, features = ["std", "backend-winit", "renderer-software", "compat-1-2", "accessibility", "unstable-winit-030"] }
+glam = "0.29"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dependencies.windows]
+version = "0.58"
+features = [
+  "Win32_Devices_Display",
+  "Win32_Foundation",
+  "Win32_Graphics_Imaging",
+  "Win32_Globalization",
+  "Win32_Graphics_Direct3D",
+  "Win32_Graphics_Direct3D10",
+  "Win32_Graphics_Direct3D11",
+  "Win32_Graphics_Dwm",
+  "Win32_Graphics_Dxgi",
+  "Win32_Graphics_Dxgi_Common",
+  "Win32_Graphics_Gdi",
+  "Win32_Media_MediaFoundation",
+  "Win32_Security",
+  "Win32_Storage",
+  "Win32_Storage_FileSystem",
+  "Win32_System_Com",
+  "Win32_System_Com_StructuredStorage",
+  "Win32_System_Variant",
+  "Win32_System_Console",
+  "Win32_System_Diagnostics_ToolHelp",
+  "Win32_System_Ole",
+  "Win32_UI_Shell_Common",
+  "Win32_System_LibraryLoader",
+  "Win32_System_Power",
+  "Win32_System_ProcessStatus",
+  "Win32_System_Registry",
+  "Win32_System_RemoteDesktop",
+  "Win32_System_SystemInformation",
+  "Win32_System_Threading",
+  "Win32_UI_Accessibility",
+  "Win32_UI_HiDpi",
+  "Win32_UI_Shell",
+  "Win32_UI_WindowsAndMessaging",
+]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+# quick builds while working on the UI (the release profile takes about 9 minutes)
+[profile.fast]
+inherits = "release"
+lto = false
+codegen-units = 16
+opt-level = 2
+incremental = true

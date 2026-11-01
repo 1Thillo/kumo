@@ -1,0 +1,550 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: de\n"
+
+msgid "More options"
+msgstr "Weitere Optionen"
+
+msgid "Apply to all screens"
+msgstr "Auf alle Bildschirme anwenden"
+
+msgid "Apply"
+msgstr "Anwenden"
+
+msgid "Screen {} · {}"
+msgstr "Bildschirm {} · {}"
+
+msgid "Customize…"
+msgstr "Anpassen …"
+
+msgid "Show in Explorer"
+msgstr "Im Explorer zeigen"
+
+msgid "Remove from library"
+msgstr "Aus Bibliothek entfernen"
+
+msgid "Choose a wallpaper for screen {}"
+msgstr "Wähle einen Hintergrund für Bildschirm {}"
+
+msgid "Choose a wallpaper for all screens"
+msgstr "Wähle einen Hintergrund für alle Bildschirme"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Library"
+msgstr "Bibliothek"
+
+msgid "Add"
+msgstr "Hinzufügen"
+
+msgid "Drop a video, picture or .kumo file here, or click"
+msgstr "Video, Bild oder .kumo-Datei hierher ziehen oder klicken"
+
+msgid "Paused"
+msgstr "Pausiert"
+
+msgid "Screens"
+msgstr "Bildschirme"
+
+msgid "Customize"
+msgstr "Anpassen"
+
+msgid "Resume"
+msgstr "Fortsetzen"
+
+msgid "Pause"
+msgstr "Pausieren"
+
+msgid "Back"
+msgstr "Zurück"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Source"
+msgstr "Quelle"
+
+msgid "Memory"
+msgstr "Speicher"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "All screens"
+msgstr "Alle Bildschirme"
+
+msgid "Screen {}"
+msgstr "Bildschirm {}"
+
+msgid "Remove"
+msgstr "Entfernen"
+
+msgid "Changes show on the desktop right away."
+msgstr "Änderungen werden sofort auf dem Desktop übernommen."
+
+msgid "Time of day"
+msgstr "Tageszeit"
+
+msgid "Follows your clock: sunrise, sunset, stars at night."
+msgstr "Folgt deiner Uhr: Sonnenaufgang, Abendrot, nachts Sterne."
+
+msgid "Real time"
+msgstr "Echtzeit"
+
+msgid "Fixed"
+msgstr "Fest"
+
+msgid "Time-lapse"
+msgstr "Zeitraffer"
+
+msgid "Time"
+msgstr "Uhrzeit"
+
+msgid "Morning 7:30 · Noon 12:30 · Sunset 18:36 · Night 22:00"
+msgstr "Morgen 7:30 · Mittag 12:30 · Abendrot 18:36 · Nacht 22:00"
+
+msgid "Speed"
+msgstr "Geschwindigkeit"
+
+msgid "1 day in 24 min (60×)"
+msgstr "1 Tag in 24 min (60×)"
+
+msgid "1 day in 6 min (240×)"
+msgstr "1 Tag in 6 min (240×)"
+
+msgid "1 day in 2.4 min (600×)"
+msgstr "1 Tag in 2,4 min (600×)"
+
+msgid "1 day in 36 s (2400×)"
+msgstr "1 Tag in 36 s (2400×)"
+
+msgid "Camera orbit"
+msgstr "Kamera dreht sich"
+
+msgid "0 = stands still"
+msgstr "0 = steht still"
+
+msgid "Cherry blossoms"
+msgstr "Kirschblüten"
+
+msgid "None"
+msgstr "Keine"
+
+msgid "Few"
+msgstr "Wenige"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "Many"
+msgstr "Viele"
+
+msgid "Parallax"
+msgstr "Parallaxe"
+
+msgid "The camera follows the mouse a little."
+msgstr "Die Kamera folgt leicht der Maus."
+
+msgid "Reset to defaults"
+msgstr "Auf Standard zurücksetzen"
+
+msgid "Fit"
+msgstr "Bildanpassung"
+
+msgid "How the picture fills screens with a different shape."
+msgstr "Wie das Bild Bildschirme mit anderem Seitenverhältnis füllt."
+
+msgid "Fill (crop)"
+msgstr "Füllen (zuschneiden)"
+
+msgid "Fit (bars)"
+msgstr "Einpassen (Ränder)"
+
+msgid "Stretch"
+msgstr "Strecken"
+
+msgid "Playback speed"
+msgstr "Wiedergabetempo"
+
+msgid "Identify"
+msgstr "Identifizieren"
+
+msgid "Wallpaper on several screens"
+msgstr "Hintergrund auf mehreren Bildschirmen"
+
+msgid "“Same everywhere” uses the least memory: screens with the same shape share one picture."
+msgstr "„Überall gleich“ ist am sparsamsten: Bildschirme mit gleichem Seitenverhältnis teilen sich ein Bild."
+
+msgid "Same everywhere"
+msgstr "Überall gleich"
+
+msgid "Per screen"
+msgstr "Pro Bildschirm"
+
+msgid "Connect a second screen to give it its own wallpaper."
+msgstr "Schließe einen zweiten Bildschirm an, um ihm einen eigenen Hintergrund zu geben."
+
+msgid "Off"
+msgstr "Aus"
+
+msgid "Main screen"
+msgstr "Hauptbildschirm"
+
+msgid "Wallpaper"
+msgstr "Hintergrund"
+
+msgid "Wallpaper (all screens)"
+msgstr "Hintergrund (alle Bildschirme)"
+
+msgid "Change…"
+msgstr "Ändern …"
+
+msgid "Live wallpaper on this screen"
+msgstr "Live-Hintergrund auf diesem Bildschirm"
+
+msgid "Off: Windows shows its normal wallpaper here."
+msgstr "Aus: Hier zeigt Windows den normalen Hintergrund."
+
+msgid "Playback & performance"
+msgstr "Wiedergabe & Leistung"
+
+msgid "Memory used by the wallpaper"
+msgstr "Arbeitsspeicher des Hintergrunds"
+
+msgid "CPU"
+msgstr "CPU"
+
+msgid "Not running"
+msgstr "Beendet"
+
+msgid "Running"
+msgstr "Läuft"
+
+msgid "This window needs another {} and quits completely when you close it."
+msgstr "Dieses Fenster braucht zusätzlich {} und wird beim Schließen komplett beendet."
+
+msgid "Picture"
+msgstr "Bildqualität"
+
+msgid "Frame rate"
+msgstr "Bildrate"
+
+msgid "30 fps looks smooth for wallpapers and needs about half the graphics power of 60."
+msgstr "30 fps wirkt bei Hintergründen flüssig und braucht etwa halb so viel Grafikleistung wie 60."
+
+msgid "Render resolution"
+msgstr "Renderauflösung"
+
+msgid "Lower saves graphics power; the picture gets a little softer."
+msgstr "Niedriger spart Grafikleistung, das Bild wird etwas weicher."
+
+msgid "High"
+msgstr "Hoch"
+
+msgid "Balanced"
+msgstr "Ausgewogen"
+
+msgid "Efficient"
+msgstr "Sparsam"
+
+msgid "Edge smoothing (FXAA)"
+msgstr "Kantenglättung (FXAA)"
+
+msgid "Smooths jagged edges. Costs very little."
+msgstr "Glättet Treppenstufen an Kanten. Kostet sehr wenig."
+
+msgid "Pause automatically"
+msgstr "Automatisch pausieren"
+
+msgid "When windows cover a screen"
+msgstr "Wenn Fenster den Bildschirm verdecken"
+
+msgid "A screen covered by a maximized or full-screen window is not drawn."
+msgstr "Ein Bildschirm unter einem maximierten oder Vollbild-Fenster wird nicht gezeichnet."
+
+msgid "On battery"
+msgstr "Im Akkubetrieb"
+
+msgid "Keep running"
+msgstr "Normal weiterlaufen"
+
+msgid "Halve the frame rate"
+msgstr "Bildrate halbieren"
+
+msgid "With energy saver"
+msgstr "Im Energiesparmodus"
+
+msgid "Always paused: locked PC, display off, Remote Desktop."
+msgstr "Immer pausiert: gesperrter PC, ausgeschalteter Bildschirm, Remotedesktop."
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "General"
+msgstr "Allgemein"
+
+msgid "Start with Windows"
+msgstr "Mit Windows starten"
+
+msgid "Kumo starts quietly in the background after you sign in."
+msgstr "Kumo startet nach der Anmeldung unauffällig im Hintergrund."
+
+msgid "Language"
+msgstr "Sprache"
+
+msgid "For this window and the menu in the notification area."
+msgstr "Gilt für dieses Fenster und das Menü im Infobereich."
+
+msgid "Same as Windows"
+msgstr "Wie Windows"
+
+msgid "Color mode"
+msgstr "Farbmodus"
+
+msgid "Light"
+msgstr "Hell"
+
+msgid "Dark"
+msgstr "Dunkel"
+
+msgid "Storage location"
+msgstr "Speicherort"
+
+msgid "{} · {} in use"
+msgstr "{} · {} belegt"
+
+msgid "Open folder"
+msgstr "Ordner öffnen"
+
+msgid "Troubleshooting"
+msgstr "Problembehandlung"
+
+msgid "Log file"
+msgstr "Protokolldatei"
+
+msgid "Helpful for bug reports."
+msgstr "Hilfreich für Fehlerberichte."
+
+msgid "Open"
+msgstr "Öffnen"
+
+msgid "Restart Kumo"
+msgstr "Kumo neu starten"
+
+msgid "Restarts the wallpaper without signing out."
+msgstr "Startet den Hintergrund neu, ohne dass du dich abmelden musst."
+
+msgid "Restart"
+msgstr "Neu starten"
+
+msgid "Quit Kumo"
+msgstr "Kumo beenden"
+
+msgid "Stops the wallpaper until the next start."
+msgstr "Beendet den Live-Hintergrund bis zum nächsten Start."
+
+msgid "Quit"
+msgstr "Beenden"
+
+msgid "Reset all settings"
+msgstr "Alle Einstellungen zurücksetzen"
+
+msgid "Frame rate, quality, pause rules, screens and what you customized go back to the defaults. Your library stays."
+msgstr "Bildrate, Qualität, Pausenregeln, Bildschirme und deine Anpassungen werden auf den Standard gesetzt. Deine Bibliothek bleibt erhalten."
+
+msgid "Reset…"
+msgstr "Zurücksetzen …"
+
+msgid "Uninstall Kumo"
+msgstr "Kumo deinstallieren"
+
+msgid "Removes Kumo from this PC. You decide what happens to your wallpapers."
+msgstr "Entfernt Kumo von diesem PC. Du entscheidest, was mit deinen Hintergründen passiert."
+
+msgid "Uninstall…"
+msgstr "Deinstallieren …"
+
+msgid "About Kumo"
+msgstr "Über Kumo"
+
+msgid "Version {}"
+msgstr "Version {}"
+
+msgid "Lightweight live wallpapers for Windows. 雲 (kumo) is Japanese for “cloud”."
+msgstr "Leichtgewichtige Live-Hintergründe für Windows. 雲 (kumo) ist Japanisch für „Wolke“."
+
+msgid "License"
+msgstr "Lizenz"
+
+msgid "Free software under the GNU GPL v3. Built with Slint (GPL v3)."
+msgstr "Freie Software unter der GNU GPL v3. Erstellt mit Slint (GPL v3)."
+
+msgid "Show"
+msgstr "Anzeigen"
+
+msgid "No account, no ads, no telemetry."
+msgstr "Kein Konto, keine Werbung, keine Telemetrie."
+
+msgid "Release to add"
+msgstr "Zum Hinzufügen loslassen"
+
+msgid "This format is not supported"
+msgstr "Dieses Format wird nicht unterstützt"
+
+msgid "Kumo setup"
+msgstr "Kumo-Einrichtung"
+
+msgid "Update Kumo"
+msgstr "Kumo aktualisieren"
+
+msgid "Install Kumo"
+msgstr "Kumo installieren"
+
+msgid "Live wallpapers"
+msgstr "Live-Hintergründe"
+
+msgid "Step 1 of 3"
+msgstr "Schritt 1 von 3"
+
+msgid "Step 2 of 3"
+msgstr "Schritt 2 von 3"
+
+msgid "Step 3 of 3"
+msgstr "Schritt 3 von 3"
+
+msgid "Welcome to Kumo"
+msgstr "Willkommen bei Kumo"
+
+msgid "How Kumo will be set up"
+msgstr "So wird Kumo eingerichtet"
+
+msgid "Removing Kumo…"
+msgstr "Kumo wird entfernt …"
+
+msgid "Updating Kumo…"
+msgstr "Kumo wird aktualisiert …"
+
+msgid "Installing Kumo…"
+msgstr "Kumo wird installiert …"
+
+msgid "Uninstall not finished"
+msgstr "Deinstallation nicht abgeschlossen"
+
+msgid "Installation not finished"
+msgstr "Installation nicht abgeschlossen"
+
+msgid "A newer Kumo is installed"
+msgstr "Eine neuere Version ist installiert"
+
+msgid "Kumo is already installed"
+msgstr "Kumo ist bereits installiert"
+
+msgid "Uninstall Kumo?"
+msgstr "Kumo deinstallieren?"
+
+msgid "Kumo has been removed"
+msgstr "Kumo wurde entfernt"
+
+msgid "Kumo is running!"
+msgstr "Kumo läuft!"
+
+msgid "Your settings and your library stay."
+msgstr "Deine Einstellungen und deine Bibliothek bleiben erhalten."
+
+msgid "Kumo shows animated 3D scenes, videos and pictures as your desktop wallpaper – with a fraction of the memory."
+msgstr "Kumo zeigt animierte 3D-Szenen, Videos und Bilder als Desktop-Hintergrund – mit einem Bruchteil des Arbeitsspeichers."
+
+msgid "About 70 MB instead of several hundred MB"
+msgstr "Rund 70 MB statt mehrerer hundert MB"
+
+msgid "Pauses by itself while you work or play"
+msgstr "Pausiert von selbst, wenn du arbeitest oder spielst"
+
+msgid "Free, open source, no account and no ads"
+msgstr "Kostenlos, Open Source, ohne Konto und Werbung"
+
+msgid "Recommended. Otherwise you have to open Kumo yourself after every restart."
+msgstr "Empfohlen. Sonst musst du Kumo nach jedem Neustart selbst öffnen."
+
+msgid "Shortcut on the desktop"
+msgstr "Verknüpfung auf dem Desktop"
+
+msgid "Install folder: {}"
+msgstr "Installationsordner: {}"
+
+msgid "No administrator rights needed."
+msgstr "Keine Administratorrechte nötig."
+
+msgid "This only takes a moment."
+msgstr "Das dauert nur einen Moment."
+
+msgid "Copy files"
+msgstr "Dateien kopieren"
+
+msgid "Add a Start menu entry"
+msgstr "Startmenü-Eintrag anlegen"
+
+msgid "Set up autostart"
+msgstr "Autostart einrichten"
+
+msgid "Register under “Apps”"
+msgstr "Bei „Apps“ eintragen"
+
+msgid "Your new wallpaper is here. You can find Kumo in the Start menu at any time. Its icon at the bottom right may be hidden behind the ^ arrow."
+msgstr "Dein neuer Hintergrund ist da. Du findest Kumo jederzeit im Startmenü. Das Symbol unten rechts kann hinter dem Pfeil ^ versteckt sein."
+
+msgid "From now on Kumo starts with Windows."
+msgstr "Kumo startet ab jetzt automatisch mit Windows."
+
+msgid "You can start Kumo from the Start menu at any time."
+msgstr "Du kannst Kumo jederzeit über das Startmenü starten."
+
+msgid "You no longer need the downloaded file and can delete it."
+msgstr "Die heruntergeladene Datei brauchst du nicht mehr und kannst sie löschen."
+
+msgid "Version {} is installed, this file only contains {}. Close this window and keep the newer one."
+msgstr "Version {} ist installiert, diese Datei enthält nur {}. Schließe dieses Fenster und behalte die neuere Version."
+
+msgid "Version {} is installed. There is nothing to do, unless something is not working: then repair it."
+msgstr "Version {} ist installiert. Es gibt nichts zu tun. Falls etwas nicht funktioniert, kannst du Kumo reparieren."
+
+msgid "The program and its Start menu entry are removed, and your normal Windows wallpaper comes back."
+msgstr "Das Programm und sein Startmenü-Eintrag werden entfernt, und dein normaler Windows-Hintergrund kommt zurück."
+
+msgid "Also delete my wallpapers and settings"
+msgstr "Auch meine Hintergründe und Einstellungen löschen"
+
+msgid "{} in your library. Your original files stay where they are."
+msgstr "{} in deiner Bibliothek. Deine Originaldateien bleiben erhalten."
+
+msgid "Thanks for trying it. The last files disappear as soon as this window closes."
+msgstr "Danke fürs Ausprobieren. Die letzten Dateien verschwinden, sobald dieses Fenster geschlossen ist."
+
+msgid "Close"
+msgstr "Schließen"
+
+msgid "Repair"
+msgstr "Reparieren"
+
+msgid "Uninstall"
+msgstr "Deinstallieren"
+
+msgid "Next"
+msgstr "Weiter"
+
+msgid "Try again"
+msgstr "Erneut versuchen"
+
+msgid "Update"
+msgstr "Aktualisieren"
+
+msgid "Install"
+msgstr "Installieren"
+
+msgid "Open Kumo"
+msgstr "Kumo öffnen"
+
+msgid "On"
+msgstr "Ein"

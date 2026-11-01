@@ -1,0 +1,465 @@
+// Design tokens from docs/design/ui-spec.md §4 and the small set of controls built on them.
+// The std widgets only provide ComboBox and ScrollView; buttons, switches, sliders and segmented
+// controls are drawn here so they use Kumo's sakura accent.
+
+import { Palette } from "std-widgets.slint";
+
+export global Theme {
+    // the Windows 11 fonts; panel.rs switches to the older ones on Windows 10
+    in property <string> icon-font: "Segoe Fluent Icons";
+    in property <string> ui-font: "Segoe UI Variable Text";
+    out property <bool> dark: Palette.color-scheme == ColorScheme.dark;
+    out property <color> bg-base: dark ? #202020 : #F3F3F3;
+    out property <color> bg-layer: dark ? #272727 : #F9F9F9;
+    out property <color> card: dark ? #2D2D2D : #FFFFFF;
+    out property <color> card-hover: dark ? #323232 : #F9F9F9;
+    out property <color> subtle-hover: dark ? #ffffff0f : #0000000a;
+    out property <color> subtle-selected: dark ? #ffffff14 : #0000000f;
+    out property <color> control: dark ? #373737 : #FEFEFE;
+    out property <color> control-hover: dark ? #3D3D3D : #F9F9F9;
+    out property <color> control-pressed: dark ? #323232 : #F3F3F3;
+    out property <color> control-stroke: dark ? #444444 : #E0E0E0;
+    out property <color> strong: dark ? #4A4A4A : #FFFFFF;
+    out property <color> track: dark ? #373737 : #EDEDED;
+    out property <color> stroke: dark ? #1C1C1C : #E5E5E5;
+    out property <color> divider: dark ? #353535 : #E5E5E5;
+    out property <color> text: dark ? #FFFFFF : #1A1A1A;
+    out property <color> text2: dark ? #C5C5C5 : #5F5F5F;
+    out property <color> text3: dark ? #9A9A9A : #878787;
+    out property <color> accent: dark ? #F2A2BE : #AD4069;
+    out property <color> accent-hover: dark ? #F5B3CA : #9B385E;
+    out property <color> accent-pressed: dark ? #E68FAF : #8A3254;
+    out property <color> accent-text: dark ? #2A1520 : #FFFFFF;
+    out property <color> accent-tint: dark ? #F2A2BE1f : #AD406914;
+    out property <color> success: dark ? #6CCB5F : #0F7B0F;
+    out property <color> caution: dark ? #FCE100 : #9D5D00;
+    out property <color> critical: dark ? #FF99A4 : #C42B1C;
+    out property <color> info-bg: dark ? #2D2D2D : #F6F6F6;
+    out property <color> caution-bg: dark ? #433519 : #FFF4CE;
+    out property <color> critical-bg: dark ? #442726 : #FDE7E9;
+    out property <color> success-bg: dark ? #393D1B : #DFF6DD;
+}
+
+export component Icon inherits Text {
+    font-family: Theme.icon-font;
+    font-size: 16px;
+    color: Theme.text;
+    vertical-alignment: center;
+    horizontal-alignment: center;
+    accessible-role: none;
+}
+
+// Keyboard access for a custom control: a Tab stop, Enter or Space to activate, and a ring that
+// only shows while the keyboard is in use.
+export component KeyFocus inherits FocusScope {
+    in property <length> radius: 4px;
+    in property <bool> arrows;
+    property <bool> by-keyboard;
+    callback activated;
+    callback arrow(int);
+    callback context;
+    focus-on-click: false;
+    focus-changed-event(reason) => {
+        root.by-keyboard = reason == FocusReason.tab-navigation;
+    }
+    key-pressed(e) => {
+        if (e.text == Key.Return || e.text == " ") {
+            root.activated();
+            return accept;
+        }
+        if (root.arrows && e.text == Key.LeftArrow) {
+            root.arrow(-1);
+            return accept;
+        }
+        if (root.arrows && e.text == Key.RightArrow) {
+            root.arrow(1);
+            return accept;
+        }
+        if (e.text == Key.Menu || (e.modifiers.shift && e.text == Key.F10)) {
+            root.context();
+            return accept;
+        }
+        return reject;
+    }
+    Rectangle {
+        x: -2px;
+        y: -2px;
+        width: parent.width + 4px;
+        height: parent.height + 4px;
+        visible: root.has-focus && root.by-keyboard;
+        border-radius: root.radius + 2px;
+        border-width: 2px;
+        border-color: Theme.text;
+    }
+}
+
+export component Btn inherits Rectangle {
+    in property <string> text;
+    in property <string> icon;
+    in property <bool> primary;
+    in property <bool> subtle;
+    in property <bool> enabled: true;
+    in property <string> tooltip;
+    callback clicked;
+    height: 32px;
+    border-radius: 4px;
+    opacity: root.enabled ? 1 : 0.45;
+    background: root.primary ? (ta.pressed ? Theme.accent-pressed : ta.has-hover ? Theme.accent-hover : Theme.accent)
+        : root.subtle ? (ta.pressed ? Theme.subtle-selected : ta.has-hover ? Theme.subtle-hover : transparent)
+        : (ta.pressed ? Theme.control-pressed : ta.has-hover ? Theme.control-hover : Theme.control);
+    border-width: root.primary || root.subtle ? 0px : 1px;
+    border-color: Theme.control-stroke;
+    animate background { duration: 83ms; }
+    accessible-role: button;
+    accessible-label: root.text != "" ? root.text : root.tooltip;
+    accessible-action-default => {
+        if (root.enabled) {
+            root.clicked();
+        }
+    }
+    forward-focus: kf;
+    ta := TouchArea {
+        enabled: root.enabled;
+        mouse-cursor: pointer;
+        clicked => { root.clicked(); }
+    }
+    HorizontalLayout {
+        padding-left: root.text == "" ? 8px : 12px;
+        padding-right: root.text == "" ? 8px : 12px;
+        spacing: 8px;
+        alignment: center;
+        if root.icon != "": Icon {
+            text: root.icon;
+            color: root.primary ? Theme.accent-text : Theme.text;
+        }
+        if root.text != "": Text {
+            text: root.text;
+            vertical-alignment: center;
+            color: root.primary ? Theme.accent-text : Theme.text;
+            font-weight: root.primary ? 600 : 400;
+        }
+    }
+    kf := KeyFocus {
+        enabled: root.enabled;
+        activated => { root.clicked(); }
+    }
+}
+
+export component LinkBtn inherits Text {
+    callback clicked;
+    color: lta.has-hover ? Theme.accent-hover : Theme.accent;
+    vertical-alignment: center;
+    accessible-role: button;
+    accessible-label: root.text;
+    accessible-action-default => { root.clicked(); }
+    lta := TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.clicked(); }
+    }
+    KeyFocus {
+        activated => { root.clicked(); }
+    }
+}
+
+export component Toggle inherits Rectangle {
+    in-out property <bool> checked;
+    in property <string> on-text: @tr("On");
+    in property <string> off-text: @tr("Off");
+    in property <bool> enabled: true;
+    in property <string> label;
+    callback toggled(bool);
+    min-width: 96px;
+    min-height: 32px;
+    horizontal-stretch: 0;
+    opacity: root.enabled ? 1 : 0.45;
+    accessible-role: switch;
+    accessible-checked: root.checked;
+    accessible-label: root.label;
+    accessible-action-default => { root.flip(); }
+    function flip() {
+        if (root.enabled) {
+            root.checked = !root.checked;
+            root.toggled(root.checked);
+        }
+    }
+    HorizontalLayout {
+        spacing: 12px;
+        alignment: end;
+        Text {
+            text: root.checked ? root.on-text : root.off-text;
+            vertical-alignment: center;
+            color: Theme.text;
+        }
+        VerticalLayout {
+            alignment: center;
+            Rectangle {
+                width: 40px;
+                height: 20px;
+                border-radius: 10px;
+                background: root.checked ? (tt.has-hover ? Theme.accent-hover : Theme.accent) : (tt.has-hover ? Theme.subtle-hover : transparent);
+                border-width: root.checked ? 0px : 1px;
+                border-color: Theme.text2;
+                knob := Rectangle {
+                    width: root.checked ? 14px : 12px;
+                    height: self.width;
+                    border-radius: self.width / 2;
+                    x: root.checked ? parent.width - self.width - 3px : 4px;
+                    y: (parent.height - self.height) / 2;
+                    background: root.checked ? Theme.accent-text : Theme.text2;
+                    animate x { duration: 100ms; }
+                }
+            }
+        }
+    }
+    tt := TouchArea {
+        enabled: root.enabled;
+        mouse-cursor: pointer;
+        clicked => { root.flip(); }
+    }
+    KeyFocus {
+        enabled: root.enabled;
+        activated => { root.flip(); }
+    }
+}
+
+export component Segmented inherits Rectangle {
+    in property <[string]> items;
+    in-out property <int> selected;
+    callback picked(int);
+    height: 32px;
+    border-radius: 4px;
+    background: Theme.track;
+    function pick(i: int) {
+        root.selected = max(0, min(root.items.length - 1, i));
+        root.picked(root.selected);
+    }
+    border-width: 1px;
+    border-color: Theme.control-stroke;
+    HorizontalLayout {
+        padding: 2px;
+        spacing: 2px;
+        for it[i] in root.items: Rectangle {
+            border-radius: 3px;
+            background: i == root.selected ? Theme.strong : (st.has-hover ? Theme.subtle-hover : transparent);
+            border-width: i == root.selected ? 1px : 0px;
+            border-color: Theme.control-stroke;
+            min-width: lbl.preferred-width + 24px;
+            accessible-role: button;
+            accessible-label: it;
+            accessible-checkable: true;
+            accessible-checked: i == root.selected;
+            accessible-action-default => { root.pick(i); }
+            lbl := Text {
+                text: it;
+                color: Theme.text;
+                font-weight: i == root.selected ? 600 : 400;
+                vertical-alignment: center;
+                horizontal-alignment: center;
+            }
+            if i == root.selected: Rectangle {
+                width: 16px;
+                height: 3px;
+                border-radius: 1.5px;
+                background: Theme.accent;
+                y: parent.height - 4px;
+            }
+            st := TouchArea {
+                mouse-cursor: pointer;
+                clicked => { root.pick(i); }
+            }
+        }
+    }
+    KeyFocus {
+        arrows: true;
+        arrow(d) => { root.pick(root.selected + d); }
+    }
+}
+
+export component SliderX inherits Rectangle {
+    in property <float> minimum: 0;
+    in property <float> maximum: 1;
+    in property <float> step: 0;
+    in-out property <float> value;
+    in property <string> label;
+    callback moved(float);
+    callback released(float);
+    width: 180px;
+    min-height: 32px;
+    accessible-role: slider;
+    accessible-label: root.label;
+    accessible-value: root.value;
+    accessible-value-minimum: root.minimum;
+    accessible-value-maximum: root.maximum;
+    accessible-action-increment => { root.nudge(1); }
+    accessible-action-decrement => { root.nudge(-1); }
+    property <float> frac: (root.value - root.minimum) / (root.maximum - root.minimum);
+    function nudge(d: int) {
+        let by = root.step > 0 ? root.step : (root.maximum - root.minimum) / 20;
+        root.value = max(root.minimum, min(root.maximum, root.value + d * by));
+        root.moved(root.value);
+        root.released(root.value);
+    }
+    function set-at(px: length) {
+        let t = max(0, min(1, (px - 10px) / (root.width - 20px)));
+        let v = root.minimum + t * (root.maximum - root.minimum);
+        root.value = root.step > 0 ? Math.round(v / root.step) * root.step : v;
+        root.moved(root.value);
+    }
+    Rectangle {
+        y: (parent.height - 4px) / 2;
+        height: 4px;
+        border-radius: 2px;
+        background: Theme.control-stroke;
+    }
+    Rectangle {
+        x: 0px;
+        y: (parent.height - 4px) / 2;
+        height: 4px;
+        width: root.frac * (root.width - 20px) + 10px;
+        border-radius: 2px;
+        background: Theme.accent;
+    }
+    Rectangle {
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
+        x: root.frac * (root.width - 20px);
+        y: (parent.height - 20px) / 2;
+        background: Theme.strong;
+        border-width: 1px;
+        border-color: Theme.control-stroke;
+        Rectangle {
+            width: sa.pressed ? 10px : sa.has-hover ? 14px : 12px;
+            height: self.width;
+            border-radius: self.width / 2;
+            background: Theme.accent;
+        }
+    }
+    sa := TouchArea {
+        mouse-cursor: pointer;
+        pointer-event(e) => {
+            if (e.kind == PointerEventKind.down) {
+                root.set-at(self.mouse-x);
+            }
+            if (e.kind == PointerEventKind.up) {
+                root.released(root.value);
+            }
+        }
+        moved => {
+            if (self.pressed) {
+                root.set-at(self.mouse-x);
+            }
+        }
+    }
+    KeyFocus {
+        arrows: true;
+        arrow(d) => { root.nudge(d); }
+    }
+}
+
+// One settings row: icon, title, description, control on the right (§5 SettingsCard).
+export component Card inherits Rectangle {
+    in property <string> icon;
+    in property <string> title;
+    in property <string> description;
+    border-radius: 8px;
+    background: Theme.card;
+    border-width: 1px;
+    border-color: Theme.stroke;
+    HorizontalLayout {
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        // 64px at least, but long texts may need more, which a min-height on the card would forbid
+        Rectangle {
+            width: 0px;
+            min-height: 40px;
+        }
+        HorizontalLayout {
+            spacing: 16px;
+            if root.icon != "": Icon {
+                text: root.icon;
+                font-size: 20px;
+                width: 20px;
+            }
+            VerticalLayout {
+                alignment: center;
+                horizontal-stretch: 1;
+                spacing: 2px;
+                Text {
+                    text: root.title;
+                    color: Theme.text;
+                    wrap: word-wrap;
+                }
+                if root.description != "": Text {
+                    text: root.description;
+                    font-size: 12px;
+                    color: Theme.text2;
+                    wrap: word-wrap;
+                }
+            }
+            @children
+        }
+    }
+}
+
+export component SectionTitle inherits Text {
+    font-weight: 600;
+    color: Theme.text;
+    vertical-alignment: center;
+}
+
+export component InfoBar inherits Rectangle {
+    in property <int> kind; // 1 info, 2 caution, 3 critical, 4 success
+    in property <string> message;
+    in property <string> action;
+    in property <bool> closable: true;
+    callback action-clicked;
+    callback dismissed;
+    border-radius: 4px;
+    background: root.kind == 3 ? Theme.critical-bg : root.kind == 2 ? Theme.caution-bg : root.kind == 4 ? Theme.success-bg : Theme.info-bg;
+    border-width: 1px;
+    border-color: Theme.stroke;
+    accessible-role: text;
+    accessible-label: root.message;
+    HorizontalLayout {
+        padding-left: 4px;
+        padding-right: 8px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        spacing: 12px;
+        Rectangle {
+            width: 0px;
+            min-height: 32px;
+        }
+        Icon {
+            text: root.kind == 3 ? "\u{E783}" : root.kind == 2 ? "\u{E7BA}" : root.kind == 4 ? "\u{E73E}" : "\u{E946}";
+            color: root.kind == 3 ? Theme.critical : root.kind == 2 ? Theme.caution : root.kind == 4 ? Theme.success : Theme.accent;
+            width: 16px;
+        }
+        Text {
+            text: root.message;
+            wrap: word-wrap;
+            vertical-alignment: center;
+            horizontal-stretch: 1;
+            color: Theme.text;
+        }
+        if root.action != "": VerticalLayout {
+            alignment: center;
+            Btn {
+                text: root.action;
+                clicked => { root.action-clicked(); }
+            }
+        }
+        if root.closable: VerticalLayout {
+            alignment: center;
+            Btn {
+                icon: "\u{E711}";
+                subtle: true;
+                tooltip: @tr("Close");
+                clicked => { root.dismissed(); }
+            }
+        }
+    }
+}

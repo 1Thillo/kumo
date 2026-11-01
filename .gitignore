@@ -1,0 +1,6 @@
+/target
+/shots
+/dist
+/proto
+scenes/*/node_modules
+/docs/review-*.md

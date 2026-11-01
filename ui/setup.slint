@@ -1,0 +1,471 @@
+// Setup wizard (docs/design/ui-spec.md §8): shown when the downloaded kumo.exe is started.
+
+import { Palette } from "std-widgets.slint";
+import { Theme, Icon, Btn, LinkBtn, InfoBar, KeyFocus } from "theme.slint";
+
+export global Setup {
+    // 0 welcome, 1 options, 2 working, 3 error, 6 running, 7 already installed, 8 uninstall,
+    // 9 uninstalled
+    in-out property <int> page: 0;
+    in property <bool> uninstalling;
+    in property <bool> newer-installed;
+    in property <string> data-size;
+    in-out property <bool> delete-data;
+    in-out property <bool> autostart: true;
+    in-out property <bool> desktop-shortcut: false;
+    in property <string> version;
+    in property <string> installed-version;
+    in property <string> install-dir;
+    in property <string> warning;
+    in property <string> error-text;
+    in property <int> step: 0; // installing: 1..4 checklist
+    callback install();
+    callback uninstall-now();
+    callback open-panel();
+    callback close();
+}
+
+component Check inherits HorizontalLayout {
+    in property <string> text;
+    in property <int> state; // 0 pending, 1 running, 2 done
+    spacing: 10px;
+    height: 24px;
+    Icon {
+        width: 16px;
+        text: root.state == 2 ? "\u{E73E}" : root.state == 1 ? "\u{F16A}" : "\u{EA3A}";
+        color: root.state == 2 ? Theme.success : root.state == 1 ? Theme.accent : Theme.text3;
+        opacity: root.state == 1 ? 0.6 + 0.4 * Math.sin(360deg * animation-tick() / 1.2s) : 1;
+    }
+    Text {
+        text: root.text;
+        vertical-alignment: center;
+        color: root.state == 0 ? Theme.text2 : Theme.text;
+    }
+}
+
+component Bullet inherits HorizontalLayout {
+    in property <string> icon;
+    in property <string> text;
+    spacing: 12px;
+    Icon {
+        text: root.icon;
+        width: 20px;
+        color: Theme.accent;
+    }
+    Text {
+        text: root.text;
+        wrap: word-wrap;
+        vertical-alignment: center;
+        horizontal-stretch: 1;
+        color: Theme.text;
+    }
+}
+
+component CheckBoxRow inherits Rectangle {
+    in-out property <bool> checked;
+    in property <string> title;
+    in property <string> description;
+    min-height: 44px;
+    accessible-role: checkbox;
+    accessible-checked: root.checked;
+    accessible-label: root.title;
+    accessible-action-default => { root.checked = !root.checked; }
+    HorizontalLayout {
+        spacing: 12px;
+        VerticalLayout {
+            alignment: start;
+            padding-top: 2px;
+            Rectangle {
+                width: 20px;
+                height: 20px;
+                border-radius: 4px;
+                background: root.checked ? Theme.accent : transparent;
+                border-width: root.checked ? 0px : 1px;
+                border-color: Theme.text2;
+                if root.checked: Icon {
+                    text: "\u{E73E}";
+                    font-size: 12px;
+                    color: Theme.accent-text;
+                }
+            }
+        }
+        VerticalLayout {
+            spacing: 2px;
+            horizontal-stretch: 1;
+            Text {
+                text: root.title;
+                font-weight: 600;
+                color: Theme.text;
+                wrap: word-wrap;
+            }
+            if root.description != "": Text {
+                text: root.description;
+                font-size: 12px;
+                color: Theme.text2;
+                wrap: word-wrap;
+            }
+        }
+    }
+    TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.checked = !root.checked; }
+    }
+    KeyFocus {
+        activated => { root.checked = !root.checked; }
+    }
+}
+
+export component SetupWindow inherits Window {
+    title: Setup.uninstalling || Setup.page >= 8 ? @tr("Uninstall Kumo") : Setup.page == 7 ? @tr("Kumo setup") : Setup.installed-version != "" ? @tr("Update Kumo") : @tr("Install Kumo");
+    icon: @image-url("../assets/kumo-icon.png");
+    width: 640px;
+    height: 440px;
+    default-font-family: Theme.ui-font;
+    default-font-size: 14px;
+    background: Theme.bg-layer;
+    property <bool> updating: Setup.installed-version != "";
+    forward-focus: keys;
+
+    public function set-dark(dark: bool) {
+        Palette.color-scheme = dark ? ColorScheme.dark : ColorScheme.light;
+    }
+
+    // Enter does what the highlighted button in the footer says
+    function primary-action() {
+        if (Setup.page == 0) {
+            Setup.page = 1;
+        } else if (Setup.page == 1) {
+            Setup.install();
+        } else if (Setup.page == 3) {
+            if (Setup.uninstalling) {
+                Setup.uninstall-now();
+            } else {
+                Setup.install();
+            }
+        } else if (Setup.page == 6 || (Setup.page == 7 && !Setup.newer-installed)) {
+            Setup.open-panel();
+        } else if (Setup.page == 8) {
+            Setup.uninstall-now();
+        } else if (Setup.page == 9 || Setup.page == 7) {
+            Setup.close();
+        }
+    }
+
+    keys := FocusScope {
+    focus-on-tab-navigation: false;
+    focus-on-click: false;
+    key-pressed(e) => {
+        if (e.text == Key.Return) {
+            root.primary-action();
+            return accept;
+        }
+        if (e.text == Key.Escape && Setup.page != 2) {
+            Setup.close();
+            return accept;
+        }
+        return reject;
+    }
+    HorizontalLayout {
+        // art panel
+        Rectangle {
+            width: 200px;
+            clip: true;
+            Image {
+                width: parent.width;
+                height: parent.height;
+                source: @image-url("../assets/setup-art.jpg");
+                image-fit: cover;
+            }
+            Rectangle {
+                y: parent.height - 140px;
+                height: 140px;
+                background: @linear-gradient(180deg, #00000000 0%, #00000073 100%);
+            }
+            VerticalLayout {
+                alignment: end;
+                padding: 24px;
+                spacing: 2px;
+                Text {
+                    text: "Kumo";
+                    font-size: 20px;
+                    font-weight: 600;
+                    color: white;
+                }
+                Text {
+                    text: @tr("Live wallpapers");
+                    font-size: 12px;
+                    color: #ffffffcc;
+                }
+            }
+        }
+        // content
+        VerticalLayout {
+            VerticalLayout {
+                padding-left: 32px;
+                padding-right: 32px;
+                padding-top: 28px;
+                spacing: 8px;
+                vertical-stretch: 1;
+                alignment: start;
+                Text {
+                    text: Setup.page == 0 ? @tr("Step 1 of 3") : Setup.page == 1 ? @tr("Step 2 of 3") : Setup.page == 2 ? @tr("Step 3 of 3") : "";
+                    font-size: 12px;
+                    color: Theme.text2;
+                }
+                Text {
+                    font-size: 28px;
+                    font-weight: 600;
+                    color: Theme.text;
+                    wrap: word-wrap;
+                    text: Setup.page == 0 ? (root.updating ? @tr("Update Kumo") : @tr("Welcome to Kumo"))
+                        : Setup.page == 1 ? @tr("How Kumo will be set up")
+                        : Setup.page == 2 ? (Setup.uninstalling ? @tr("Removing Kumo…") : root.updating ? @tr("Updating Kumo…") : @tr("Installing Kumo…"))
+                        : Setup.page == 3 ? (Setup.uninstalling ? @tr("Uninstall not finished") : @tr("Installation not finished"))
+                        : Setup.page == 7 ? (Setup.newer-installed ? @tr("A newer Kumo is installed") : @tr("Kumo is already installed"))
+                        : Setup.page == 8 ? @tr("Uninstall Kumo?")
+                        : Setup.page == 9 ? @tr("Kumo has been removed")
+                        : @tr("Kumo is running!");
+                }
+                // ---------- pages
+                if Setup.page == 0: VerticalLayout {
+                    spacing: 14px;
+                    if root.updating: Text {
+                        text: Setup.installed-version + " → " + Setup.version + ". " + @tr("Your settings and your library stay.");
+                        color: Theme.text2;
+                        wrap: word-wrap;
+                    }
+                    Text {
+                        text: @tr("Kumo shows animated 3D scenes, videos and pictures as your desktop wallpaper – with a fraction of the memory.");
+                        font-size: 16px;
+                        wrap: word-wrap;
+                        color: Theme.text;
+                    }
+                    Bullet {
+                        icon: "\u{E950}";
+                        text: @tr("About 70 MB instead of several hundred MB");
+                    }
+                    Bullet {
+                        icon: "\u{E769}";
+                        text: @tr("Pauses by itself while you work or play");
+                    }
+                    Bullet {
+                        icon: "\u{EB51}";
+                        text: @tr("Free, open source, no account and no ads");
+                    }
+                    if Setup.warning != "": InfoBar {
+                        kind: 2;
+                        message: Setup.warning;
+                        closable: false;
+                    }
+                }
+                if Setup.page == 1: VerticalLayout {
+                    spacing: 12px;
+                    CheckBoxRow {
+                        checked <=> Setup.autostart;
+                        title: @tr("Start with Windows");
+                        description: @tr("Recommended. Otherwise you have to open Kumo yourself after every restart.");
+                    }
+                    CheckBoxRow {
+                        checked <=> Setup.desktop-shortcut;
+                        title: @tr("Shortcut on the desktop");
+                    }
+                    HorizontalLayout {
+                        spacing: 12px;
+                        Icon {
+                            text: "\u{E8B7}";
+                            width: 20px;
+                            color: Theme.text2;
+                        }
+                        VerticalLayout {
+                            horizontal-stretch: 1;
+                            Text {
+                                text: @tr("Install folder: {}", Setup.install-dir);
+                                color: Theme.text;
+                                wrap: word-wrap;
+                            }
+                            Text {
+                                text: @tr("No administrator rights needed.");
+                                font-size: 12px;
+                                color: Theme.text2;
+                                wrap: word-wrap;
+                            }
+                        }
+                    }
+                }
+                if Setup.page == 2 && Setup.uninstalling: Text {
+                    text: @tr("This only takes a moment.");
+                    color: Theme.text2;
+                }
+                if Setup.page == 2 && !Setup.uninstalling: VerticalLayout {
+                    spacing: 6px;
+                    Text {
+                        text: @tr("This only takes a moment.");
+                        color: Theme.text2;
+                    }
+                    Rectangle { height: 8px; }
+                    Check {
+                        text: @tr("Copy files");
+                        state: Setup.step == 1 ? 1 : Setup.step > 1 ? 2 : 0;
+                    }
+                    Check {
+                        text: @tr("Add a Start menu entry");
+                        state: Setup.step == 2 ? 1 : Setup.step > 2 ? 2 : 0;
+                    }
+                    Check {
+                        text: @tr("Set up autostart");
+                        state: Setup.step == 3 ? 1 : Setup.step > 3 ? 2 : 0;
+                    }
+                    Check {
+                        text: @tr("Register under “Apps”");
+                        state: Setup.step == 4 ? 1 : Setup.step > 4 ? 2 : 0;
+                    }
+                }
+                if Setup.page == 3: VerticalLayout {
+                    spacing: 12px;
+                    InfoBar {
+                        kind: 3;
+                        message: Setup.error-text;
+                        closable: false;
+                    }
+                }
+                if Setup.page == 6: VerticalLayout {
+                    spacing: 12px;
+                    Icon {
+                        text: "\u{E73E}";
+                        font-size: 48px;
+                        color: Theme.success;
+                        horizontal-alignment: left;
+                    }
+                    Text {
+                        text: @tr("Your new wallpaper is here. You can find Kumo in the Start menu at any time. Its icon at the bottom right may be hidden behind the ^ arrow.");
+                        wrap: word-wrap;
+                        color: Theme.text;
+                    }
+                    Text {
+                        text: Setup.autostart ? @tr("From now on Kumo starts with Windows.") : @tr("You can start Kumo from the Start menu at any time.");
+                        font-size: 12px;
+                        color: Theme.text2;
+                        wrap: word-wrap;
+                    }
+                    Text {
+                        text: @tr("You no longer need the downloaded file and can delete it.");
+                        font-size: 12px;
+                        color: Theme.text2;
+                        wrap: word-wrap;
+                    }
+                }
+                if Setup.page == 7: VerticalLayout {
+                    spacing: 12px;
+                    Text {
+                        text: Setup.newer-installed ? @tr("Version {} is installed, this file only contains {}. Close this window and keep the newer one.", Setup.installed-version, Setup.version)
+                            : @tr("Version {} is installed. There is nothing to do, unless something is not working: then repair it.", Setup.installed-version);
+                        color: Theme.text;
+                        wrap: word-wrap;
+                    }
+                    HorizontalLayout {
+                        alignment: start;
+                        LinkBtn {
+                            text: @tr("Uninstall Kumo");
+                            clicked => { Setup.page = 8; }
+                        }
+                    }
+                }
+                if Setup.page == 8: VerticalLayout {
+                    spacing: 14px;
+                    Text {
+                        text: @tr("The program and its Start menu entry are removed, and your normal Windows wallpaper comes back.");
+                        color: Theme.text;
+                        wrap: word-wrap;
+                    }
+                    CheckBoxRow {
+                        checked <=> Setup.delete-data;
+                        title: @tr("Also delete my wallpapers and settings");
+                        description: @tr("{} in your library. Your original files stay where they are.", Setup.data-size);
+                    }
+                }
+                if Setup.page == 9: Text {
+                    text: @tr("Thanks for trying it. The last files disappear as soon as this window closes.");
+                    color: Theme.text;
+                    wrap: word-wrap;
+                }
+            }
+            // footer
+            Rectangle {
+                height: 64px;
+                background: Theme.bg-base;
+                Rectangle {
+                    y: 0px;
+                    height: 1px;
+                    background: Theme.divider;
+                }
+                HorizontalLayout {
+                    padding-left: 32px;
+                    padding-right: 24px;
+                    spacing: 8px;
+                    alignment: end;
+                    if Setup.page == 1: VerticalLayout {
+                        alignment: center;
+                        Btn {
+                            text: @tr("Back");
+                            min-width: 96px;
+                            clicked => { Setup.page = 0; }
+                        }
+                    }
+                    if Setup.page != 2: VerticalLayout {
+                        alignment: center;
+                        Btn {
+                            text: Setup.page >= 4 && Setup.page != 8 ? @tr("Close") : @tr("Cancel");
+                            min-width: 96px;
+                            clicked => { Setup.close(); }
+                        }
+                    }
+                    if Setup.page == 7 && !Setup.newer-installed: VerticalLayout {
+                        alignment: center;
+                        Btn {
+                            text: @tr("Repair");
+                            min-width: 96px;
+                            clicked => { Setup.page = 1; }
+                        }
+                    }
+                    if Setup.page == 8: VerticalLayout {
+                        alignment: center;
+                        Btn {
+                            primary: true;
+                            min-width: 96px;
+                            text: @tr("Uninstall");
+                            clicked => { Setup.uninstall-now(); }
+                        }
+                    }
+                    if Setup.page == 0: VerticalLayout {
+                        alignment: center;
+                        Btn {
+                            primary: true;
+                            min-width: 96px;
+                            text: @tr("Next");
+                            clicked => { Setup.page = 1; }
+                        }
+                    }
+                    if Setup.page == 1 || Setup.page == 3: VerticalLayout {
+                        alignment: center;
+                        Btn {
+                            primary: true;
+                            min-width: 96px;
+                            text: Setup.page == 3 ? @tr("Try again") : root.updating ? @tr("Update") : @tr("Install");
+                            clicked => { root.primary-action(); }
+                        }
+                    }
+                    if Setup.page == 6 || (Setup.page == 7 && !Setup.newer-installed): VerticalLayout {
+                        alignment: center;
+                        Btn {
+                            primary: true;
+                            min-width: 96px;
+                            text: @tr("Open Kumo");
+                            clicked => { Setup.open-panel(); }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    }
+}

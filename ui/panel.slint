@@ -76,6 +76,7 @@ export global State {
     in property <bool> has-battery: true;
     // settings / about
     in-out property <bool> autostart;
+    in property <bool> packaged;
     in-out property <int> language-index;
     in-out property <int> theme-index;
     in property <string> library-path;
@@ -1346,7 +1347,7 @@ component SettingsPage inherits Rectangle {
             Card {
                 icon: "\u{E74D}";
                 title: @tr("Uninstall Kumo");
-                description: @tr("Removes Kumo from this PC. You decide what happens to your wallpapers.");
+                description: State.packaged ? @tr("Opens the Windows settings. Your wallpapers and settings go with the app.") : @tr("Removes Kumo from this PC. You decide what happens to your wallpapers.");
                 VerticalLayout {
                     alignment: center;
                     Btn {
@@ -1445,7 +1446,7 @@ component AboutPage inherits Rectangle {
             Card {
                 icon: "\u{E74D}";
                 title: @tr("Uninstall Kumo");
-                description: @tr("Removes Kumo from this PC. You decide what happens to your wallpapers.");
+                description: State.packaged ? @tr("Opens the Windows settings. Your wallpapers and settings go with the app.") : @tr("Removes Kumo from this PC. You decide what happens to your wallpapers.");
                 VerticalLayout {
                     alignment: center;
                     Btn {

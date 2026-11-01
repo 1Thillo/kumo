@@ -121,7 +121,8 @@ pub fn thumbnail_via_shell(src: &Path, dst: &Path) -> Result<()> {
     use windows::Win32::UI::Shell::{IShellItemImageFactory, SHCreateItemFromParsingName, SIIGBF_BIGGERSIZEOK, SIIGBF_RESIZETOFIT};
     unsafe {
         let _ = CoInitializeEx(None, COINIT_APARTMENTTHREADED);
-        let item: IShellItemImageFactory = SHCreateItemFromParsingName(&HSTRING::from(src.as_os_str()), None)?;
+        // the thumbnail handler runs outside a Store package, so it needs the real path
+        let item: IShellItemImageFactory = SHCreateItemFromParsingName(&HSTRING::from(crate::install::visible_path(src).as_os_str()), None)?;
         let hbm = item.GetImage(SIZE { cx: 960, cy: 540 }, SIIGBF_RESIZETOFIT | SIIGBF_BIGGERSIZEOK)?;
         let mut bm = BITMAP::default();
         GetObjectW(hbm, std::mem::size_of::<BITMAP>() as i32, Some(&mut bm as *mut _ as *mut _));

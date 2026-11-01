@@ -117,7 +117,7 @@ fn open(target: &str, args: Option<&str>) {
 fn open_text(name: &str, text: &str) {
     let path = std::env::temp_dir().join(name);
     if std::fs::write(&path, text).is_ok() {
-        open(&path.display().to_string(), None);
+        open(&install::visible_path(&path).display().to_string(), None);
     }
 }
 
@@ -447,7 +447,8 @@ fn refresh(app: &PanelWindow, ctx: &mut Ctx) {
         "dark" => 2,
         _ => 0,
     });
-    st.set_library_path(library::dir().display().to_string().into());
+    st.set_library_path(install::visible_path(&library::dir()).display().to_string().into());
+    st.set_packaged(install::packaged());
     st.set_library_size(size_text(install::data_size(), tr.0).into());
     st.set_version(env!("CARGO_PKG_VERSION").into());
 
@@ -718,6 +719,12 @@ fn pick_files(de: bool) -> Vec<PathBuf> {
         let filters = [COMDLG_FILTERSPEC { pszName: PCWSTR(name.as_ptr()), pszSpec: PCWSTR(spec.as_ptr()) }];
         let _ = dlg.SetFileTypes(&filters);
         let _ = dlg.SetOptions(dlg.GetOptions().unwrap_or_default() | FOS_ALLOWMULTISELECT | FOS_FILEMUSTEXIST);
+        // a package starts in System32, so the first look should not be there
+        if let Some(videos) = install::known_folder(&windows::Win32::UI::Shell::FOLDERID_Videos) {
+            if let Ok(folder) = windows::Win32::UI::Shell::SHCreateItemFromParsingName::<_, _, windows::Win32::UI::Shell::IShellItem>(&HSTRING::from(videos.as_os_str()), None) {
+                let _ = dlg.SetDefaultFolder(&folder);
+            }
+        }
         if dlg.Show(None).is_err() {
             return out;
         }
@@ -861,7 +868,7 @@ pub fn run_panel() {
     st.on_explorer(move |id| {
         if let Some(item) = library::get(&id) {
             let target = if item.builtin { item.folder() } else { item.path() };
-            open("explorer.exe", Some(&format!("/select,\"{}\"", target.display())));
+            open("explorer.exe", Some(&format!("/select,\"{}\"", install::visible_path(&target).display())));
         }
     });
 
@@ -941,6 +948,10 @@ pub fn run_panel() {
             let st = app.global::<State>();
             if st.get_autostart() != config::autostart() {
                 config::set_autostart(st.get_autostart());
+                // switched off in Task Manager: only Windows can switch that back on
+                if st.get_autostart() && !config::autostart() {
+                    open("ms-settings:startupapps", None);
+                }
             }
             c.cfg.language = ["system", "de", "en"][st.get_language_index().clamp(0, 2) as usize].into();
             c.cfg.theme = ["system", "light", "dark"][st.get_theme_index().clamp(0, 2) as usize].into();
@@ -1028,10 +1039,10 @@ pub fn run_panel() {
         show_info(&app, &mut c);
     });
 
-    st.on_open_log(|| open(&config::dir().join("kumo.log").display().to_string(), None));
+    st.on_open_log(|| open(&install::visible_path(&config::dir().join("kumo.log")).display().to_string(), None));
     st.on_open_library(|| {
         let _ = std::fs::create_dir_all(library::dir());
-        open(&library::dir().display().to_string(), None)
+        open(&install::visible_path(&library::dir()).display().to_string(), None)
     });
     st.on_restart_engine(|| {
         stop_engine();
@@ -1055,7 +1066,7 @@ pub fn run_panel() {
     });
     st.on_uninstall(|| {
         let exe = install::installed_exe();
-        if exe.exists() {
+        if exe.exists() && !install::packaged() {
             open(&exe.display().to_string(), Some("--uninstall"));
         } else {
             open("ms-settings:appsfeatures", None);
@@ -1144,6 +1155,24 @@ pub fn run_panel() {
     timer.start(TimerMode::Repeated, Duration::from_secs(2), tick);
 
     title_bar_soon(weak.clone(), dark(&ctx.borrow().cfg));
+
+    if std::env::args().any(|a| a == "--welcome") {
+        let w2 = weak.clone();
+        Timer::single_shot(Duration::from_millis(500), move || {
+            let de = german(&Config::load());
+            let (t, b) = if de {
+                ("Kumo mit Windows starten?", "Dein Live-Hintergrund ist dann nach jeder Anmeldung von selbst wieder da. Du kannst das jederzeit unter Einstellungen ändern.")
+            } else {
+                ("Start Kumo with Windows?", "Your live wallpaper is then back by itself after every sign-in. You can change this at any time under Settings.")
+            };
+            if confirm(t, b) {
+                config::set_autostart(true);
+            }
+            if let Some(app) = w2.upgrade() {
+                app.global::<State>().set_autostart(config::autostart());
+            }
+        });
+    }
 
     // jump straight to a page (visual tests)
     if let Some(p) = std::env::var("KUMO_UI_PAGE").ok().and_then(|v| v.parse::<i32>().ok()) {

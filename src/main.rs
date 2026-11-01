@@ -32,6 +32,7 @@ use windows::Win32::Graphics::Gdi::ValidateRect;
 use windows::Win32::System::Console::{AttachConsole, ATTACH_PARENT_PROCESS};
 use windows::Win32::System::LibraryLoader::{GetModuleHandleW, SetDefaultDllDirectories, LOAD_LIBRARY_SEARCH_SYSTEM32};
 use windows::Win32::System::Power::{RegisterPowerSettingNotification, POWERBROADCAST_SETTING};
+use windows::Win32::System::Recovery::{RegisterApplicationRestart, RESTART_NO_CRASH, RESTART_NO_HANG, RESTART_NO_REBOOT};
 use windows::Win32::System::RemoteDesktop::{WTSRegisterSessionNotification, NOTIFY_FOR_THIS_SESSION};
 use windows::Win32::System::Threading::*;
 use windows::Win32::UI::HiDpi::{SetProcessDpiAwarenessContext, DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2};
@@ -169,10 +170,14 @@ pub fn notify_engine() {
 
 /// Starts the control panel as its own process (it frees all its memory when closed).
 pub fn open_panel() {
+    start_panel(w!("--panel"));
+}
+
+fn start_panel(args: PCWSTR) {
     if let Ok(exe) = std::env::current_exe() {
         let exe = HSTRING::from(exe.as_os_str());
         unsafe {
-            ShellExecuteW(None, w!("open"), &exe, w!("--panel"), PCWSTR::null(), SW_SHOWNORMAL);
+            ShellExecuteW(None, w!("open"), &exe, args, PCWSTR::null(), SW_SHOWNORMAL);
         }
     }
 }
@@ -348,6 +353,8 @@ fn main() {
             let _ = AttachConsole(ATTACH_PARENT_PROCESS);
         }
     }
+    // the setup wizard greets people on GitHub, the panel does it in the Store package
+    let first_run = install::packaged() && !config::config_path().exists();
     let mut cfg = Config::load();
     for (k, v) in &args.overrides {
         cfg.set(k, v);
@@ -437,6 +444,14 @@ fn main() {
             MessageBoxW(None, &HSTRING::from(format!("{first}\n\n{recent}")), w!("Kumo"), MB_ICONWARNING | MB_SETFOREGROUND);
         }
         app.tray = Some(tray::Tray::new(msg, icon, &tray::tooltip(app.cfg.paused)));
+        if install::packaged() {
+            // brings the wallpaper back after a Store update, and only then
+            let _ = RegisterApplicationRestart(PCWSTR::null(), RESTART_NO_CRASH | RESTART_NO_HANG | RESTART_NO_REBOOT);
+        }
+        if first_run {
+            app.cfg.save();
+            start_panel(w!("--panel --welcome"));
+        }
         engine::run(&mut app);
         if let Some(t) = &app.tray {
             t.remove();

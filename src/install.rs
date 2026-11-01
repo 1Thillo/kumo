@@ -3,10 +3,14 @@
 //! `kumo.exe` copies itself to `%LOCALAPPDATA%\Programs\Kumo`, registers a Start menu entry, the
 //! autostart entry and an entry in Settings → Apps, and can remove all of that again. Nothing here
 //! needs administrator rights, so people without them can use Kumo too.
+//!
+//! The same exe also runs inside the Microsoft Store package, where Windows does all of this.
 
 use std::path::{Path, PathBuf};
+use std::sync::OnceLock;
 use windows::core::{w, Interface, GUID, HSTRING, PCWSTR, PWSTR};
 use windows::Win32::Foundation::*;
+use windows::Win32::Storage::Packaging::Appx::{GetCurrentPackageFamilyName, GetCurrentPackageFullName};
 use windows::Win32::System::Com::{CoCreateInstance, CoInitializeEx, CoTaskMemFree, IPersistFile, CLSCTX_INPROC_SERVER, COINIT_APARTMENTTHREADED};
 use windows::Win32::System::Diagnostics::ToolHelp::*;
 use windows::Win32::System::Registry::*;
@@ -26,17 +30,51 @@ pub fn known_folder(id: &GUID) -> Option<PathBuf> {
     }
 }
 
+/// True inside the Microsoft Store package.
+pub fn packaged() -> bool {
+    static PACKAGED: OnceLock<bool> = OnceLock::new();
+    *PACKAGED.get_or_init(|| {
+        let mut len = 0;
+        unsafe { GetCurrentPackageFullName(&mut len, PWSTR::null()) != APPMODEL_ERROR_NO_PACKAGE }
+    })
+}
+
+/// Where a file in AppData really is. A package sees its private copy under the normal path, but
+/// Explorer and the text editor are outside the package and only find it at the real one.
+pub fn visible_path(path: &Path) -> PathBuf {
+    if !packaged() {
+        return path.to_path_buf();
+    }
+    let mut buf = [0u16; 256];
+    let mut len = buf.len() as u32;
+    if unsafe { GetCurrentPackageFamilyName(&mut len, PWSTR(buf.as_mut_ptr())) } != ERROR_SUCCESS {
+        return path.to_path_buf();
+    }
+    let family = String::from_utf16_lossy(&buf[..len.saturating_sub(1) as usize]);
+    let local = PathBuf::from(std::env::var_os("LOCALAPPDATA").unwrap_or_default());
+    let private = local.join("Packages").join(family).join("LocalCache");
+    let roaming = PathBuf::from(std::env::var_os("APPDATA").unwrap_or_default());
+    [(&local, "Local"), (&roaming, "Roaming")]
+        .iter()
+        .find_map(|(base, name)| path.strip_prefix(base).ok().map(|rest| private.join(name).join(rest)))
+        .filter(|real| real.exists())
+        .unwrap_or_else(|| path.to_path_buf())
+}
+
 pub fn install_dir() -> PathBuf {
     known_folder(&FOLDERID_UserProgramFiles).unwrap_or_else(|| PathBuf::from(std::env::var_os("LOCALAPPDATA").unwrap_or_default()).join("Programs")).join("Kumo")
 }
 
 pub fn installed_exe() -> PathBuf {
+    if packaged() {
+        return std::env::current_exe().unwrap_or_default();
+    }
     install_dir().join("kumo.exe")
 }
 
 /// True when this exe is the installed one; any other copy is a download and shows the setup.
 pub fn is_installed_copy() -> bool {
-    std::env::current_exe().is_ok_and(|e| e.to_string_lossy().eq_ignore_ascii_case(&installed_exe().to_string_lossy()))
+    packaged() || std::env::current_exe().is_ok_and(|e| e.to_string_lossy().eq_ignore_ascii_case(&installed_exe().to_string_lossy()))
 }
 
 fn shortcut_path() -> PathBuf {

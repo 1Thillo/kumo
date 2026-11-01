@@ -27,6 +27,7 @@ DE = {
     "Stops the wallpaper until the next start.": "Beendet den Live-Hintergrund bis zum nächsten Start.",
     "Quit": "Beenden",
     "Removes Kumo from this PC. You decide what happens to your wallpapers.": "Entfernt Kumo von diesem PC. Du entscheidest, was mit deinen Hintergründen passiert.",
+    "Opens the Windows settings. Your wallpapers and settings go with the app.": "Öffnet die Windows-Einstellungen. Deine Hintergründe und Einstellungen werden mit entfernt.",
     "Updating Kumo…": "Kumo wird aktualisiert …",
     "Kumo is already installed": "Kumo ist bereits installiert",
     "Kumo setup": "Kumo-Einrichtung",

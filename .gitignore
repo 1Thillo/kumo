@@ -4,3 +4,4 @@
 /proto
 scenes/*/node_modules
 /docs/review-*.md
+/package/store

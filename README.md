@@ -159,7 +159,8 @@ scenes/pagoda/  scene generator (JavaScript) and bake script
 assets/         baked scene, icon, pictures, third-party notices
 docs/design/    UI specification and mockup
 site/           the website (static files for Vercel, media rendered by tools/site_media.ps1)
-tools/          generators for the third-party notices and the website media
+package/        the Microsoft Store package: manifest, logos, listing pictures (see docs/store.md)
+tools/          generators for the notices, the website media and the Store package
 ```
 
 ### The `.kumo` format

@@ -360,6 +360,9 @@ msgstr "Zurücksetzen …"
 msgid "Uninstall Kumo"
 msgstr "Kumo deinstallieren"
 
+msgid "Opens the Windows settings. Your wallpapers and settings go with the app."
+msgstr "Öffnet die Windows-Einstellungen. Deine Hintergründe und Einstellungen werden mit entfernt."
+
 msgid "Removes Kumo from this PC. You decide what happens to your wallpapers."
 msgstr "Entfernt Kumo von diesem PC. Du entscheidest, was mit deinen Hintergründen passiert."
 

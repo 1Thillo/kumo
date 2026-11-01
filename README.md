@@ -7,7 +7,7 @@ that follow your clock.
 
 ![Voxel Pagoda Garden](docs/preview.png)
 
-Deutsche Kurzanleitung: [weiter unten](#kurzanleitung-deutsch).
+Website: [kumo.hyos.tech](https://kumo.hyos.tech) · Deutsche Kurzanleitung: [weiter unten](#kurzanleitung-deutsch).
 
 ## Download
 

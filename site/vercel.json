@@ -2,7 +2,7 @@
   "cleanUrls": true,
   "headers": [
     {
-      "source": "/media/(.*)",
+      "source": "/(media|fonts)/(.*)",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800" }]
     },
     {

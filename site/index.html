@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kumo – Live-Hintergründe, die deinen PC in Ruhe lassen</title>
 <meta name="description" content="Kumo zeigt 3D-Szenen, Videos und Bilder hinter deinen Desktop-Symbolen. Ohne Browser im Hintergrund, kostenlos und Open Source für Windows.">
-<meta name="theme-color" content="#3f2f6b">
+<meta name="theme-color" content="#08070d">
 <link rel="canonical" href="https://kumo.hyos.tech/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://kumo.hyos.tech/">
@@ -15,21 +15,23 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" href="/media/icon-64.png">
 <link rel="apple-touch-icon" href="/media/icon-180.png">
+<link rel="preload" href="/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/style.css">
+<script>document.documentElement.classList.add("js")</script>
 <script src="/main.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#inhalt" data-t="skip">Zum Inhalt springen</a>
 
 <header class="nav">
-  <a class="brand" href="#top"><img src="/media/icon-64.png" alt="" width="28" height="28"><span>Kumo</span></a>
+  <a class="brand" href="#top"><img src="/media/icon-64.png" alt="" width="26" height="26"><span>Kumo</span></a>
   <nav aria-label="Hauptmenü" data-t-aria="navLabel">
     <a href="#vergleich" data-t="navCompare">Vergleich</a>
     <a href="#tag-nacht" data-t="navDay">Tag und Nacht</a>
     <a href="#funktionen" data-t="navFeatures">Funktionen</a>
-    <a href="#download" data-t="navDownload">Download</a>
   </nav>
   <button class="lang" id="lang" type="button" aria-label="Switch to English">EN</button>
+  <a class="nav-cta" href="#download" data-t="navDownload">Download</a>
 </header>
 
 <main id="top">
@@ -38,134 +40,174 @@
       <source src="/media/hero.webm" type="video/webm; codecs=av01.0.08M.08">
       <source src="/media/hero.mp4" type="video/mp4">
     </video>
+    <canvas class="hero-glass" id="glass" aria-hidden="true"></canvas>
     <div class="hero-text">
       <p class="eyebrow"><span class="kanji" lang="ja">雲</span> <span data-t="eyebrow">kumo, japanisch für Wolke</span></p>
       <h1><span data-t="heroTitle1">Dein Desktop lebt.</span> <span data-t="heroTitle2">Dein PC atmet auf.</span></h1>
       <p class="lead" data-t="heroLead">Kumo zeigt 3D-Szenen, Videos und Bilder hinter deinen Desktop-Symbolen. Ohne Browser im Hintergrund, in einem einzigen Programm mit 19 MB.</p>
       <div class="actions">
-        <a class="btn primary" href="https://github.com/Hamido212/kumo/releases/latest" data-t="ctaDownload">Kostenlos für Windows laden</a>
-        <a class="btn ghost" href="https://github.com/Hamido212/kumo" data-t="ctaSource">Quellcode ansehen</a>
+        <a class="chroma" href="https://github.com/Hamido212/kumo/releases/latest"><span data-t="ctaDownload">Kostenlos für Windows laden</span></a>
+        <a class="plain" href="https://github.com/Hamido212/kumo" data-t="ctaSource">Quellcode ansehen</a>
       </div>
-      <p class="fine" data-t="heroFine">Windows 10 und 11 · keine Adminrechte · Open Source unter GPL-3.0</p>
     </div>
+    <aside class="meter" aria-label="Messwert" data-t-aria="meterLabel">
+      <span class="mono" data-t="meterTop">Task-Manager</span>
+      <b>74 MB</b>
+      <span data-t="meterText">3D-Szene auf zwei Bildschirmen</span>
+    </aside>
   </section>
 
-  <section class="stats" id="inhalt" aria-label="Kennzahlen" data-t-aria="statsLabel">
-    <div><b>74 MB</b><span data-t="stat1">3D-Szene auf zwei Bildschirmen</span></div>
-    <div><b data-t="stat2Num">0,3 MB</b><span data-t="stat2">Standbild, 30 Sekunden nach dem Zeichnen</span></div>
-    <div><b>8 MB</b><span data-t="stat3">Bedienfeld, nur solange es offen ist</span></div>
-    <div><b>0</b><span data-t="stat4">Konten, Werbung und Telemetrie</span></div>
-  </section>
-
-  <section class="block" id="vergleich">
-    <svg class="cloud c1" viewBox="0 0 120 40" aria-hidden="true"><path d="M20 40V30H10V20H30V10H60V0H90V10H100V20H120V40Z"/></svg>
-    <p class="kicker" data-t="cmpKicker">Der Vergleich</p>
-    <h2 data-t="cmpTitle">Dieselbe Szene. Ein Zwölftel des Speichers.</h2>
-    <p class="intro" data-t="cmpIntro">Die meisten Live-Hintergründe laufen in einem eingebetteten Browser, oft einem pro Bildschirm. Kumo zeichnet direkt mit der Grafikkarte. Wir haben dieselbe Pagoden-Szene auf demselben Laptop gemessen.</p>
-
-    <div class="card chart">
-      <h3 data-t="cmpChart">Pagoden-Szene auf zwei Bildschirmen (1440p und 1080p)</h3>
-      <div class="bar"><span class="name" data-t="cmpLively">Lively mit Web-Szene</span><span class="track"><span class="fill other" style="--v:100%"></span></span><b>900 MB</b></div>
-      <div class="bar"><span class="name">Kumo</span><span class="track"><span class="fill" style="--v:8.2%"></span></span><b>74 MB</b></div>
-      <p class="note" data-t="cmpNote">Spalte „Arbeitsspeicher“ im Task-Manager, Intel-Iris-Xe-Laptop. Die Grafikkarte belegt bei beiden zusätzlich eigenen Speicher. Der Wert gilt für eine Web-Szene: Videos laufen in Lively anders und wurden nicht gemessen.</p>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <div><span data-t="tick1">Kein Browser</span><span data-t="tick2">Ein Programm mit 19 MB</span><span data-t="tick3">Rust und Direct3D 11</span><span data-t="tick4">Open Source unter GPL-3.0</span><span data-t="tick5">Keine Telemetrie</span><span data-t="tick6">Keine Adminrechte</span></div>
+      <div><span data-t="tick1">Kein Browser</span><span data-t="tick2">Ein Programm mit 19 MB</span><span data-t="tick3">Rust und Direct3D 11</span><span data-t="tick4">Open Source unter GPL-3.0</span><span data-t="tick5">Keine Telemetrie</span><span data-t="tick6">Keine Adminrechte</span></div>
     </div>
+  </div>
 
-    <div class="two">
-      <div class="card">
+  <section class="block compare-block" id="vergleich">
+    <div class="contours" aria-hidden="true"></div>
+    <div id="inhalt"></div>
+    <header class="head" data-r>
+      <p class="label"><span>01</span> <span data-t="cmpKicker">Der Vergleich</span></p>
+      <h2 class="twelve"><span class="refract" data-text="12×">12×</span> <span data-t="cmpTitle">weniger Speicher für dieselbe Szene.</span></h2>
+      <p class="intro" data-t="cmpIntro">Die meisten Live-Hintergründe laufen in einem eingebetteten Browser, oft einem pro Bildschirm. Kumo zeichnet direkt mit der Grafikkarte. Gemessen mit derselben Pagoden-Szene auf demselben Laptop.</p>
+    </header>
+
+    <div class="bento">
+      <article class="tile wide" data-r>
+        <h3 data-t="cmpChart">Pagoden-Szene auf zwei Bildschirmen</h3>
+        <div class="waffle-row">
+          <div class="waffle-head"><span data-t="cmpLively">Lively mit Web-Szene</span><b>900 MB</b></div>
+          <div class="waffle" id="wafOther" role="img" aria-label="900 MB"></div>
+        </div>
+        <div class="waffle-row">
+          <div class="waffle-head"><span>Kumo</span><b class="pink">74 MB</b></div>
+          <div class="waffle" id="wafKumo" role="img" aria-label="74 MB"></div>
+        </div>
+        <p class="note" data-t="cmpNote">Ein Würfel sind 10 MB. Spalte „Arbeitsspeicher“ im Task-Manager, Intel-Iris-Xe-Laptop, 1440p und 1080p. Die Grafikkarte belegt bei beiden zusätzlich eigenen Speicher. Der Wert gilt für eine Web-Szene: Videos laufen in Lively anders und wurden nicht gemessen.</p>
+      </article>
+
+      <article class="tile" data-r>
         <h3 data-t="shareTitle">Was das für deinen Laptop heißt</h3>
         <div class="seg" role="group" aria-label="Arbeitsspeicher des Laptops" data-t-aria="shareLabel">
           <button type="button" data-gb="4">4 GB</button>
           <button type="button" data-gb="8" class="on">8 GB</button>
           <button type="button" data-gb="16">16 GB</button>
         </div>
-        <div class="bar small"><span class="name" data-t="cmpLively">Lively mit Web-Szene</span><span class="track"><span class="fill other" id="shareOther"></span></span><b id="shareOtherText"></b></div>
-        <div class="bar small"><span class="name">Kumo</span><span class="track"><span class="fill" id="shareKumo"></span></span><b id="shareKumoText"></b></div>
+        <div class="bar"><span class="name" data-t="cmpLively">Lively mit Web-Szene</span><b id="shareOtherText"></b><span class="track"><span class="fill other" id="shareOther"></span></span></div>
+        <div class="bar"><span class="name">Kumo</span><b id="shareKumoText"></b><span class="track"><span class="fill" id="shareKumo"></span></span></div>
         <p class="note" data-t="shareNote">Anteil am gesamten Arbeitsspeicher, nur für den Hintergrund.</p>
-      </div>
-      <div class="card">
+      </article>
+
+      <article class="tile" data-r>
         <h3 data-t="ownTitle">Was Kumo selbst braucht</h3>
-        <div class="bar small"><span class="name" data-t="own1">3D-Szene</span><span class="track"><span class="fill" style="--v:29.6%"></span></span><b>63 MB</b></div>
-        <div class="bar small"><span class="name">VP9, AV1</span><span class="track"><span class="fill" style="--v:42.7%"></span></span><b>91 MB</b></div>
-        <div class="bar small"><span class="name">H.264</span><span class="track"><span class="fill" style="--v:55.9%"></span></span><b>119 MB</b></div>
-        <div class="bar small"><span class="name">4K HEVC</span><span class="track"><span class="fill" style="--v:100%"></span></span><b>213 MB</b></div>
+        <div class="bar"><span class="name" data-t="own1">3D-Szene</span><b>63 MB</b><span class="track"><span class="fill" style="--v:29.6%"></span></span></div>
+        <div class="bar"><span class="name">VP9, AV1</span><b>91 MB</b><span class="track"><span class="fill" style="--v:42.7%"></span></span></div>
+        <div class="bar"><span class="name">H.264</span><b>119 MB</b><span class="track"><span class="fill" style="--v:55.9%"></span></span></div>
+        <div class="bar"><span class="name">4K HEVC</span><b>213 MB</b><span class="track"><span class="fill" style="--v:100%"></span></span></div>
         <p class="note" data-t="ownNote">Ein Bildschirm mit 1080p, Video mit Hardware-Dekodierung. Videos brauchen mehr als Szenen, das gehört zur Wahrheit dazu.</p>
+      </article>
+
+      <article class="tile fact" data-r><b data-t="stat2Num">0,3 MB</b><span data-t="stat2">Standbild, 30 Sekunden nach dem Zeichnen</span></article>
+      <article class="tile fact" data-r><b>8 MB</b><span data-t="stat3">Bedienfeld, nur solange es offen ist</span></article>
+      <article class="tile fact" data-r><b>0</b><span data-t="stat4">Konten, Werbung und Telemetrie</span></article>
+    </div>
+  </section>
+
+  <section class="day" id="tag-nacht">
+    <div class="day-stick">
+      <div class="day-frames" id="dayFrames"><img src="/media/evening.webp" alt="Die Pagoden-Insel im Abendlicht" data-t-alt="altEvening" width="1920" height="1080" loading="lazy"></div>
+      <div class="day-text">
+        <p class="label"><span>02</span> <span data-t="dayKicker">Tag und Nacht</span></p>
+        <h2 id="dayWord" aria-live="off" data-t="dayWord3">Abendrot</h2>
+        <p data-t="dayIntro">Die Szene folgt deiner Uhr. Scroll durch einen ganzen Tag: Jedes Bild kommt direkt aus Kumo.</p>
+      </div>
+      <div class="day-clock" aria-hidden="true">
+        <span id="dayClock">18:36</span>
+        <i><i id="dayBar"></i></i>
       </div>
     </div>
   </section>
 
-  <section class="block" id="tag-nacht">
-    <p class="kicker" data-t="dayKicker">Tag und Nacht</p>
-    <h2 data-t="dayTitle">Der Tag zieht über deinen Bildschirm.</h2>
-    <p class="intro" data-t="dayIntro">Die Szene folgt deiner Uhr: Morgenlicht, Abendrot, Laternen in der Nacht. Du kannst auch eine feste Uhrzeit oder einen Zeitraffer wählen. Zieh den Regler und vergleiche selbst.</p>
+  <section class="block" id="stimmungen">
+    <header class="head" data-r>
+      <p class="label"><span>03</span> <span data-t="fanKicker">Vergleichsbild</span></p>
+      <h2 data-t="fanTitle">Zieh die Nacht über den Tag.</h2>
+      <p class="intro" data-t="fanIntro">Gleiche Kamera, gleicher Moment, nur das Licht ändert sich. Wähle eine Stimmung und schieb den Regler.</p>
+    </header>
 
-    <div class="compare" id="compare">
-      <img id="cmpDay" src="/media/noon.webp" alt="Die Pagoden-Insel am Tag" data-t-alt="altDay" width="1920" height="1080" loading="lazy">
-      <img class="top" src="/media/night.webp" alt="Dieselbe Insel bei Nacht mit leuchtenden Laternen" data-t-alt="altNight" width="1920" height="1080" loading="lazy">
-      <span class="tag left" data-t="tagNight">Nacht</span>
-      <span class="tag right" id="cmpTag" data-t="tagNoon">Mittag</span>
+    <div class="fan" id="fan" role="group" aria-label="Tageszeit wählen" data-t-aria="dayPick">
+      <button type="button" class="fan-card" data-img="morning" style="--i:-1.5" data-point="pick"><img src="/media/morning.webp" alt="" width="1920" height="1080" loading="lazy"><span data-t="tagMorning">Morgen</span></button>
+      <button type="button" class="fan-card on" data-img="noon" style="--i:-.5" data-point="pick"><img src="/media/noon.webp" alt="" width="1920" height="1080" loading="lazy"><span data-t="tagNoon">Mittag</span></button>
+      <button type="button" class="fan-card" data-img="evening" style="--i:.5" data-point="pick"><img src="/media/evening.webp" alt="" width="1920" height="1080" loading="lazy"><span data-t="tagEvening">Abend</span></button>
+      <button type="button" class="fan-card" data-img="night" style="--i:1.5" data-point="pick"><img src="/media/night.webp" alt="" width="1920" height="1080" loading="lazy"><span data-t="tagNight">Nacht</span></button>
+    </div>
+
+    <div class="compare" id="compare" data-point="drag" data-r>
+      <img id="cmpRight" src="/media/noon.webp" alt="Die Pagoden-Insel am Tag" data-t-alt="altDay" width="1920" height="1080" loading="lazy">
+      <img id="cmpLeft" class="top" src="/media/night.webp" alt="Dieselbe Insel bei Nacht mit leuchtenden Laternen" data-t-alt="altNight" width="1920" height="1080" loading="lazy">
+      <span class="tag left" id="tagLeft" data-t="tagNight">Nacht</span>
+      <span class="tag right" id="tagRight" data-t="tagNoon">Mittag</span>
       <span class="handle" aria-hidden="true"></span>
       <input type="range" min="0" max="100" value="50" aria-label="Vergleich zwischen Tag und Nacht verschieben" data-t-aria="cmpSlider">
     </div>
-    <div class="chips" role="group" aria-label="Tageszeit wählen" data-t-aria="dayPick">
-      <button type="button" data-img="morning" data-t="tagMorning">Morgen</button>
-      <button type="button" data-img="noon" class="on" data-t="tagNoon">Mittag</button>
-      <button type="button" data-img="evening" data-t="tagEvening">Abend</button>
-    </div>
-
-    <figure class="clip">
-      <video id="dayClip" muted loop playsinline preload="none" poster="/media/noon.webp" aria-label="Die Szene im Zeitraffer über 24 Stunden" data-t-aria="clipLabel">
-        <source src="/media/day.webm" type="video/webm; codecs=av01.0.08M.08">
-        <source src="/media/day.mp4" type="video/mp4">
-      </video>
-      <figcaption data-t="clipCaption">24 Stunden in 20 Sekunden. Direkt aus Kumo gerendert, nichts nachbearbeitet.</figcaption>
-    </figure>
   </section>
 
   <section class="block" id="funktionen">
-    <svg class="cloud c2" viewBox="0 0 120 40" aria-hidden="true"><path d="M0 40V30H20V20H40V10H80V20H100V30H120V40Z"/></svg>
-    <p class="kicker" data-t="featKicker">Funktionen</p>
-    <h2 data-t="featTitle">Alles, was ein Hintergrund braucht. Nichts, was nervt.</h2>
+    <header class="head" data-r>
+      <p class="label"><span>04</span> <span data-t="featKicker">Funktionen</span></p>
+      <h2 data-t="featTitle">Alles, was ein Hintergrund braucht. Nichts, was nervt.</h2>
+    </header>
     <ul class="grid">
-      <li><h3 data-t="f1t">Szenen, Videos, Bilder</h3><p data-t="f1">3D-Welten, MP4, WebM, MKV und alles, was Windows abspielen kann. Datei ins Fenster ziehen, fertig.</p></li>
-      <li><h3 data-t="f2t">Jeder Bildschirm für sich</h3><p data-t="f2">Überall dasselbe, pro Bildschirm etwas anderes oder auf einem gar nichts.</p></li>
-      <li><h3 data-t="f3t">Pausiert von selbst</h3><p data-t="f3">Verdeckter Bildschirm, Akku, Energiesparen, gesperrter PC, Remote Desktop: Kumo geht aus dem Weg.</p></li>
-      <li><h3 data-t="f4t">Deine Regeln</h3><p data-t="f4">15, 30 oder 60 Bilder pro Sekunde, Renderauflösung, Kantenglättung und Wiedergabetempo.</p></li>
-      <li><h3 data-t="f5t">Für alle gemacht</h3><p data-t="f5">Einrichtung in drei Schritten, Deutsch und Englisch, hell und dunkel, per Tastatur bedienbar.</p></li>
-      <li><h3 data-t="f6t">Nichts im Hintergrund</h3><p data-t="f6">Kein Konto, keine Werbung, keine Telemetrie. Das Bedienfeld beendet sich, wenn du es schließt.</p></li>
+      <li class="tile" data-r><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7.5v9L12 21l8-4.500v-9zM4 7.500 12 12l8-4.500M12 12v9"/></svg><h3 data-t="f1t">Szenen, Videos, Bilder</h3><p data-t="f1">3D-Welten, MP4, WebM, MKV und alles, was Windows abspielen kann. Datei ins Fenster ziehen, fertig.</p></li>
+      <li class="tile" data-r><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h11v8H3zM17 8h4v6h-4zM6 17h5M8.500 13v4M19 14v3"/></svg><h3 data-t="f2t">Jeder Bildschirm für sich</h3><p data-t="f2">Überall dasselbe, pro Bildschirm etwas anderes oder auf einem gar nichts.</p></li>
+      <li class="tile" data-r><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg><h3 data-t="f3t">Pausiert von selbst</h3><p data-t="f3">Verdeckter Bildschirm, Akku, Energiesparen, gesperrter PC, Remote Desktop: Kumo geht aus dem Weg.</p></li>
+      <li class="tile" data-r><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M16 4.500v5M8 14.500v5"/></svg><h3 data-t="f4t">Deine Regeln</h3><p data-t="f4">15, 30 oder 60 Bilder pro Sekunde, Renderauflösung, Kantenglättung und Wiedergabetempo.</p></li>
+      <li class="tile" data-r><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18M12 3c3 3 3.500 15 0 18M12 3c-3 3-3.500 15 0 18M12 3a9 9 0 1 0 .01 0"/></svg><h3 data-t="f5t">Für alle gemacht</h3><p data-t="f5">Einrichtung in drei Schritten, Deutsch und Englisch, hell und dunkel, per Tastatur bedienbar.</p></li>
+      <li class="tile" data-r><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5.500c0 4.500 3 7.800 7 9.500 4-1.700 7-5 7-9.500V6zM9 12l2.200 2.200L15.500 10"/></svg><h3 data-t="f6t">Nichts im Hintergrund</h3><p data-t="f6">Kein Konto, keine Werbung, keine Telemetrie. Das Bedienfeld beendet sich, wenn du es schließt.</p></li>
     </ul>
   </section>
 
   <section class="block" id="oberflaeche">
-    <p class="kicker" data-t="appKicker">Oberfläche</p>
-    <h2 data-t="appTitle">Aufgeräumt wie Windows selbst.</h2>
+    <header class="head" data-r>
+      <p class="label"><span>05</span> <span data-t="appKicker">Oberfläche</span></p>
+      <h2 data-t="appTitle">Aufgeräumt wie Windows selbst.</h2>
+    </header>
     <div class="shots">
-      <figure class="shot wide"><img data-lang-src src="/media/app-screens-de.webp" alt="Zwei Bildschirme einzeln einstellen" data-t-alt="altScreens" width="1200" height="837" loading="lazy"></figure>
-      <figure class="shot"><img data-lang-src src="/media/app-library-de.webp" alt="Kumo-Bibliothek mit der Pagoden-Szene" data-t-alt="altLibrary" width="1200" height="837" loading="lazy"></figure>
-      <figure class="shot"><img data-lang-src src="/media/app-scene-de.webp" alt="Tageszeit, Kamera und Kirschblüten der Szene anpassen" data-t-alt="altScene" width="1200" height="837" loading="lazy"></figure>
+      <figure class="shot main" data-r><img data-lang-src src="/media/app-screens-de.webp" alt="Zwei Bildschirme einzeln einstellen" data-t-alt="altScreens" width="1200" height="837" loading="lazy"></figure>
+      <figure class="shot" data-r><img data-lang-src src="/media/app-library-de.webp" alt="Kumo-Bibliothek mit der Pagoden-Szene" data-t-alt="altLibrary" width="1200" height="837" loading="lazy"></figure>
+      <figure class="shot" data-r><img data-lang-src src="/media/app-scene-de.webp" alt="Tageszeit, Kamera und Kirschblüten der Szene anpassen" data-t-alt="altScene" width="1200" height="837" loading="lazy"></figure>
     </div>
   </section>
 
   <section class="block" id="sparsam">
-    <p class="kicker" data-t="howKicker">Unter der Haube</p>
-    <h2 data-t="howTitle">Warum Kumo so wenig braucht.</h2>
+    <header class="head" data-r>
+      <p class="label"><span>06</span> <span data-t="howKicker">Unter der Haube</span></p>
+      <h2 data-t="howTitle">Warum Kumo so wenig braucht.</h2>
+    </header>
     <ol class="how">
-      <li><h3 data-t="h1t">Kein Browser</h3><p data-t="h1">Kumo ist in Rust geschrieben und zeichnet direkt mit Direct3D 11. Es startet keine Web-Engine, auch nicht pro Bildschirm.</p></li>
-      <li><h3 data-t="h2t">Eine Grafikkarte, ein Prozess</h3><p data-t="h2">Alle Bildschirme teilen sich Modelle und Shader. Gleich geformte Bildschirme teilen sich sogar ein Bild.</p></li>
-      <li><h3 data-t="h3t">Video in Hardware</h3><p data-t="h3">Frames bleiben im Decoder der Grafikkarte, und Ton wird gar nicht erst dekodiert. Ein unsichtbares Video kostet nichts.</p></li>
-      <li><h3 data-t="h4t">Schlafen statt warten</h3><p data-t="h4">Sieht niemand hin, gibt Kumo seine Render-Ziele frei und nutzt weder Prozessor noch Grafikkarte. Nach 30 Sekunden geht auch der Decoder.</p></li>
+      <li data-r><span class="mono">A</span><h3 data-t="h1t">Kein Browser</h3><p data-t="h1">Kumo ist in Rust geschrieben und zeichnet direkt mit Direct3D 11. Es startet keine Web-Engine, auch nicht pro Bildschirm.</p></li>
+      <li data-r><span class="mono">B</span><h3 data-t="h2t">Eine Grafikkarte, ein Prozess</h3><p data-t="h2">Alle Bildschirme teilen sich Modelle und Shader. Gleich geformte Bildschirme teilen sich sogar ein Bild.</p></li>
+      <li data-r><span class="mono">C</span><h3 data-t="h3t">Video in Hardware</h3><p data-t="h3">Frames bleiben im Decoder der Grafikkarte, und Ton wird gar nicht erst dekodiert. Ein unsichtbares Video kostet nichts.</p></li>
+      <li data-r><span class="mono">D</span><h3 data-t="h4t">Schlafen statt warten</h3><p data-t="h4">Sieht niemand hin, gibt Kumo seine Render-Ziele frei und nutzt weder Prozessor noch Grafikkarte. Nach 30 Sekunden geht auch der Decoder.</p></li>
     </ol>
   </section>
 
   <section class="block download" id="download">
-    <p class="kicker" data-t="dlKicker">Download</p>
-    <h2 data-t="dlTitle">In einer Minute läuft es.</h2>
+    <div class="cta" data-r>
+      <div class="cta-sky" aria-hidden="true"></div>
+      <div class="glass-logo"><img src="/media/icon-180.png" alt="" width="84" height="84"></div>
+      <p class="label"><span>07</span> <span data-t="dlKicker">Download</span></p>
+      <h2 data-t="dlTitle">In einer Minute läuft es.</h2>
+      <a class="chroma big" href="https://github.com/Hamido212/kumo/releases/latest"><span data-t="ctaDownload">Kostenlos für Windows laden</span></a>
+      <p class="fine" data-t="dlFine">Windows 10 oder 11 mit 64 Bit, Grafikkarte mit Direct3D 11. Jede Version wird öffentlich aus dem Quellcode gebaut, du kannst also prüfen, was du startest.</p>
+    </div>
+
     <ol class="steps">
-      <li><b data-t="s1t">Laden</b><p data-t="s1">Hol dir die Setup-Datei von GitHub. Schließe vorher Lively oder Wallpaper Engine, zwei Hintergrund-Programme stören sich.</p></li>
-      <li><b data-t="s2t">Warnung bestätigen</b><p data-t="s2">Kumo ist noch nicht signiert. Klicke bei der Windows-Warnung auf „Weitere Informationen“ und dann auf „Trotzdem ausführen“.</p></li>
-      <li><b data-t="s3t">Drei Schritte</b><p data-t="s3">Der Assistent braucht keine Adminrechte. Dein neuer Hintergrund startet sofort.</p></li>
+      <li data-r><span class="mono">1</span><div><b data-t="s1t">Laden</b><p data-t="s1">Hol dir die Setup-Datei von GitHub. Schließe vorher Lively oder Wallpaper Engine, zwei Hintergrund-Programme stören sich.</p></div></li>
+      <li data-r><span class="mono">2</span><div><b data-t="s2t">Warnung bestätigen</b><p data-t="s2">Kumo ist noch nicht signiert. Klicke bei der Windows-Warnung auf „Weitere Informationen“ und dann auf „Trotzdem ausführen“.</p></div></li>
+      <li data-r><span class="mono">3</span><div><b data-t="s3t">Drei Schritte</b><p data-t="s3">Der Assistent braucht keine Adminrechte. Dein neuer Hintergrund startet sofort.</p></div></li>
     </ol>
-    <a class="btn primary big" href="https://github.com/Hamido212/kumo/releases/latest" data-t="ctaDownload">Kostenlos für Windows laden</a>
-    <p class="fine" data-t="dlFine">Windows 10 oder 11 mit 64 Bit, Grafikkarte mit Direct3D 11. Jede Version wird öffentlich aus dem Quellcode gebaut, du kannst also prüfen, was du startest.</p>
 
     <div class="faq">
       <details><summary data-t="q1">Was kostet Kumo?</summary><p data-t="a1">Nichts. Kumo ist freie Software unter der GPL-3.0, ohne Konto und ohne Werbung.</p></details>
@@ -177,13 +219,18 @@
 </main>
 
 <footer>
-  <span class="brand small"><img src="/media/icon-64.png" alt="" width="20" height="20">Kumo</span>
-  <span data-t="footLicense">Freie Software unter GPL-3.0</span>
-  <nav aria-label="Rechtliches" data-t-aria="footLabel">
-    <a href="https://github.com/Hamido212/kumo">GitHub</a>
-    <a href="/impressum" data-t="footImprint">Impressum</a>
-    <a href="/datenschutz" data-t="footPrivacy">Datenschutz</a>
-  </nav>
+  <div class="contours" aria-hidden="true"></div>
+  <div class="foot-row">
+    <span data-t="footLicense">Freie Software unter GPL-3.0</span>
+    <nav aria-label="Rechtliches" data-t-aria="footLabel">
+      <a href="https://github.com/Hamido212/kumo">GitHub</a>
+      <a href="/impressum" data-t="footImprint">Impressum</a>
+      <a href="/datenschutz" data-t="footPrivacy">Datenschutz</a>
+    </nav>
+  </div>
+  <p class="wordmark" aria-hidden="true">Kumo</p>
 </footer>
+
+<div class="pointer" id="pointer" aria-hidden="true"></div>
 </body>
 </html>

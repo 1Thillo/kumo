@@ -1,7 +1,7 @@
-param([string]$Exe = "$env:LOCALAPPDATA\Programs\Kumo\kumo.exe")
+param([string]$Exe = "$env:LOCALAPPDATA\Programs\Kumo\kumo.exe", [switch]$StillsOnly)
 # Renders site/media from the real scene with kumo.exe --shot: the stills for the day slider, the
-# hero loop and the day-cycle clip. Runs offscreen, no window opens. Needs ffmpeg.
-# The camera sways on a sine and every clip fades its end into its start, so they loop cleanly.
+# frames of the scrolling day and the hero loop. Runs offscreen, no window opens. Needs ffmpeg.
+# The camera sways on a sine and the hero fades its end into its start, so it loops cleanly.
 $ErrorActionPreference = 'Stop'
 $out = Join-Path (Split-Path $PSScriptRoot) 'site\media'
 $tmp = Join-Path $env:TEMP 'kumo-site-frames'
@@ -53,7 +53,15 @@ foreach ($h in @(@('morning', 7.0), @('noon', 12.0), @('evening', 18.6), @('nigh
   Remove-Item $bmp
 }
 
-Clip 'hero' 14 { param($p) 18.6 } 0.11 27 40
-Clip 'day' 20 { param($p) (6.0 + 24.0 * $p) % 24.0 } 0.06 28 42
+# the scrolling day: closer together around sunset, where the light changes fastest
+$hours = 5.5, 7, 9, 12, 15, 17, 18, 18.6, 19.2, 20, 22, 24   # keep in step with DAY_HOURS in main.js
+for ($i = 0; $i -lt $hours.Count; $i++) {
+  $bmp = Join-Path $env:TEMP 'kumo-day.bmp'
+  Shot $bmp '1600x900' 0 ($hours[$i] % 24.0) 0
+  & ffmpeg -y -hide_banner -loglevel error -i $bmp -q:v 74 (Join-Path $out ('day-{0:D2}.webp' -f $i))
+  Remove-Item $bmp
+}
+
+if (-not $StillsOnly) { Clip 'hero' 14 { param($p) 18.6 } 0.11 27 40 }
 
 Get-ChildItem $out | ForEach-Object { '{0,-16}{1,8:N0} KB' -f $_.Name, ($_.Length / 1KB) }

@@ -64,6 +64,18 @@ fn dynamic_uniform(gpu: &Gpu, size: u64) -> wgpu::Buffer {
     gpu.device.create_buffer(&wgpu::BufferDescriptor { label: None, size, usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false })
 }
 
+/// Index data that needs no base vertex: Metal only has one on some devices, and without it every
+/// mesh after the first picks up the wrong vertices.
+fn absolute_indices(scene: &Scene) -> Vec<u32> {
+    let mut all: Vec<u32> = scene.indices.chunks_exact(4).map(|b| u32::from_le_bytes([b[0], b[1], b[2], b[3]])).collect();
+    for m in &scene.manifest.meshes {
+        for index in &mut all[m.first_index as usize..][..m.index_count as usize] {
+            *index += m.first_vertex;
+        }
+    }
+    all
+}
+
 /// Scene alpha blending, as in `Gpu::blend` of the Direct3D version.
 fn blend(dst: wgpu::BlendFactor) -> wgpu::BlendState {
     wgpu::BlendState {
@@ -165,7 +177,7 @@ impl Renderer {
         let vertex_data = |contents, usage| dev.create_buffer_init(&wgpu::util::BufferInitDescriptor { label: None, contents, usage });
         Renderer {
             vb: vertex_data(scene.vertices, wgpu::BufferUsages::VERTEX),
-            ib: vertex_data(scene.indices, wgpu::BufferUsages::INDEX),
+            ib: vertex_data(bytes(&absolute_indices(scene)), wgpu::BufferUsages::INDEX),
             p_shadow: pipeline(P { vs: "vs_shadow", fs: None, voxels: true, cull: Some(wgpu::Face::Front), write_depth: true, blend: None, shadow_pass: true }),
             p_voxel: pipeline(opaque("vs_voxel", "fs_voxel", true, Some(wgpu::Face::Back))),
             p_petal: pipeline(opaque("vs_petal", "fs_petal", false, None)),
@@ -276,7 +288,7 @@ impl Renderer {
             pass.set_index_buffer(self.ib.slice(..), wgpu::IndexFormat::Uint32);
             for (i, d) in world.draws.iter().enumerate().filter(|(_, d)| d.cast) {
                 pass.set_bind_group(0, &self.uniforms, &[self.offset(i)]);
-                pass.draw_indexed(d.mesh.first_index..d.mesh.first_index + d.mesh.index_count, d.mesh.first_vertex as i32, 0..1);
+                pass.draw_indexed(d.mesh.first_index..d.mesh.first_index + d.mesh.index_count, 0, 0..1);
             }
         }
         q.submit([enc.finish()]);
@@ -308,7 +320,7 @@ impl Renderer {
             pass.set_pipeline(&self.p_voxel);
             for (i, d) in world.draws.iter().enumerate() {
                 pass.set_bind_group(0, &self.uniforms, &[self.offset(i)]);
-                pass.draw_indexed(d.mesh.first_index..d.mesh.first_index + d.mesh.index_count, d.mesh.first_vertex as i32, 0..1);
+                pass.draw_indexed(d.mesh.first_index..d.mesh.first_index + d.mesh.index_count, 0, 0..1);
             }
 
             let base = world.draws.len();
@@ -328,7 +340,7 @@ impl Renderer {
             // pond, waterfall
             for (pipeline, mesh) in [(&self.p_water, &self.water_mesh), (&self.p_fall, &self.fall_mesh)] {
                 pass.set_pipeline(pipeline);
-                pass.draw_indexed(mesh.first_index..mesh.first_index + mesh.index_count, mesh.first_vertex as i32, 0..1);
+                pass.draw_indexed(mesh.first_index..mesh.first_index + mesh.index_count, 0, 0..1);
             }
 
             // spray (alpha), fireflies and glow halos (additive)
@@ -431,5 +443,20 @@ impl Post {
             pass.draw(0..3, 0..1);
         }
         gpu.queue.submit([enc.finish()]);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn every_index_stays_inside_its_mesh() {
+        let scene = crate::scene::parse(crate::library::PAGODA_SCENE).unwrap();
+        let all = absolute_indices(&scene);
+        for m in &scene.manifest.meshes {
+            let vertices = m.first_vertex..m.first_vertex + m.vertex_count;
+            assert!(all[m.first_index as usize..][..m.index_count as usize].iter().all(|i| vertices.contains(i)));
+        }
     }
 }

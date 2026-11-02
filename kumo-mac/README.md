@@ -10,7 +10,7 @@ and the library.
 one, compared pixel by pixel against it) and the Mac layer in `src/mac/`: a borderless window per
 screen, one level above the system wallpaper and below the desktop icons, and the menu bar item.
 
-## What is built (not yet tried on a real Mac)
+## What is built (so far only tried on a virtual macOS runner)
 
 - The built-in pagoda scene on every screen, behind the desktop icons and on all Spaces.
 - Pausing while a screen is covered, in Low Power Mode and on battery (half frame rate by default).

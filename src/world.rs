@@ -475,7 +475,19 @@ impl World {
     }
 }
 
+#[cfg(windows)]
 pub fn local_hour() -> f32 {
     let st = unsafe { windows::Win32::System::SystemInformation::GetLocalTime() };
     st.wHour as f32 + st.wMinute as f32 / 60.0 + (st.wSecond as f32 + st.wMilliseconds as f32 / 1000.0) / 3600.0
+}
+
+#[cfg(not(windows))]
+pub fn local_hour() -> f32 {
+    unsafe {
+        let mut now: libc::timeval = std::mem::zeroed();
+        libc::gettimeofday(&mut now, std::ptr::null_mut());
+        let mut tm: libc::tm = std::mem::zeroed();
+        libc::localtime_r(&now.tv_sec, &mut tm);
+        tm.tm_hour as f32 + tm.tm_min as f32 / 60.0 + (tm.tm_sec as f32 + now.tv_usec as f32 / 1e6) / 3600.0
+    }
 }

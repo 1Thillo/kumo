@@ -1,0 +1,43 @@
+[package]
+name = "kumo-mac"
+version = "0.1.0"
+edition = "2021"
+description = "Kumo for macOS: the same live wallpaper, drawn with Metal through wgpu"
+license = "GPL-3.0-only"
+publish = false
+
+# its own workspace, so the Windows build at the repository root never sees this crate
+[workspace]
+
+[[bin]]
+name = "kumo"
+path = "src/main.rs"
+
+[dependencies]
+glam = "0.29"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+pollster = "0.4"
+wgpu = { version = "30", default-features = false, features = ["wgsl"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+wgpu = { version = "30", default-features = false, features = ["metal", "wgsl"] }
+libc = "0.2"
+block2 = "0.6"
+objc2 = "0.6"
+objc2-foundation = { version = "0.3", features = ["NSArray", "NSData", "NSDate", "NSEnumerator", "NSGeometry", "NSLocale", "NSObject", "NSProcessInfo", "NSRunLoop", "NSString", "NSThread", "NSTimer", "block2"] }
+objc2-app-kit = { version = "0.3", features = ["NSApplication", "NSButton", "NSControl", "NSGraphics", "NSImage", "NSMenu", "NSMenuItem", "NSResponder", "NSRunningApplication", "NSScreen", "NSStatusBar", "NSStatusBarButton", "NSStatusItem", "NSView", "NSWindow", "objc2-core-foundation"] }
+objc2-core-foundation = "0.3"
+raw-window-handle = "0.6"
+
+# the renderer can be developed and compared with the Direct3D 11 version on a Windows PC
+[target.'cfg(windows)'.dependencies]
+wgpu = { version = "30", default-features = false, features = ["dx12", "wgsl"] }
+windows = { version = "0.58", features = ["Win32_Foundation", "Win32_System_SystemInformation"] }
+
+[profile.release]
+opt-level = "s"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true

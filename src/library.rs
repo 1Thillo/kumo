@@ -32,8 +32,8 @@ pub struct Item {
 
 pub fn dir() -> PathBuf {
     // big media files belong in the local (not roaming) profile
-    let base = std::env::var_os("LOCALAPPDATA").map(PathBuf::from).unwrap_or_else(crate::config::dir);
-    base.join("Kumo").join("library")
+    let base = std::env::var_os("LOCALAPPDATA").map(|b| PathBuf::from(b).join("Kumo")).unwrap_or_else(crate::config::dir);
+    base.join("library")
 }
 
 impl Item {

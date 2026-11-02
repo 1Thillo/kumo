@@ -4,7 +4,7 @@
 
 use crate::config::{self, Config, Fit, Layout, PowerRule, TimeMode};
 use crate::library::{self, Item, Kind};
-use crate::{desktop, engine, install, IdentifyWindow, PanelWindow, Setup, SetupWindow, State};
+use crate::{autostart, desktop, engine, install, IdentifyWindow, PanelWindow, Setup, SetupWindow, State};
 use slint::winit_030::{winit, EventResult, WinitWindowAccessor};
 use slint::{ComponentHandle, Image, ModelRc, Timer, TimerMode, VecModel};
 use std::cell::RefCell;
@@ -436,7 +436,7 @@ fn refresh(app: &PanelWindow, ctx: &mut Ctx) {
     st.set_has_battery(has_battery());
 
     // settings
-    st.set_autostart(config::autostart());
+    st.set_autostart(autostart::autostart());
     st.set_language_index(match cfg.language.as_str() {
         "de" => 1,
         "en" => 2,
@@ -946,10 +946,10 @@ pub fn run_panel() {
     st.on_settings_changed(move || {
         ch(&|app, c| {
             let st = app.global::<State>();
-            if st.get_autostart() != config::autostart() {
-                config::set_autostart(st.get_autostart());
+            if st.get_autostart() != autostart::autostart() {
+                autostart::set_autostart(st.get_autostart());
                 // switched off in Task Manager: only Windows can switch that back on
-                if st.get_autostart() && !config::autostart() {
+                if st.get_autostart() && !autostart::autostart() {
                     open("ms-settings:startupapps", None);
                 }
             }
@@ -1166,10 +1166,10 @@ pub fn run_panel() {
                 ("Start Kumo with Windows?", "Your live wallpaper is then back by itself after every sign-in. You can change this at any time under Settings.")
             };
             if confirm(t, b) {
-                config::set_autostart(true);
+                autostart::set_autostart(true);
             }
             if let Some(app) = w2.upgrade() {
-                app.global::<State>().set_autostart(config::autostart());
+                app.global::<State>().set_autostart(autostart::autostart());
             }
         });
     }
@@ -1230,7 +1230,7 @@ pub fn run_setup() {
     s.set_install_dir(install::install_dir().display().to_string().into());
     if install::installed_version().is_some() {
         // an update keeps what the user chose
-        s.set_autostart(config::autostart());
+        s.set_autostart(autostart::autostart());
         s.set_desktop_shortcut(install::has_desktop_shortcut());
     }
     if let Some(name) = other_wallpaper_app() {

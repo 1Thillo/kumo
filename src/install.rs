@@ -260,7 +260,7 @@ fn do_install(desktop: bool) -> u32 {
 pub fn install_with(autostart: bool, desktop: bool) -> Result<(), String> {
     match do_install(desktop) {
         0 => {
-            crate::config::set_autostart_for(autostart, &installed_exe());
+            crate::autostart::set_autostart_for(autostart, &installed_exe());
             Ok(())
         }
         c if crate::tray::german() => Err(format!("Eine Datei konnte nicht geschrieben werden (Fehler {c}). Läuft Kumo noch?")),
@@ -314,7 +314,7 @@ fn remove_after_exit(dir: &Path) {
 /// to run the uninstaller again.
 fn do_uninstall() -> bool {
     close_running(&[]);
-    crate::config::set_autostart(false);
+    crate::autostart::set_autostart(false);
     let _ = std::fs::remove_file(shortcut_path());
     let _ = std::fs::remove_file(desktop_shortcut_path());
     let dir = install_dir();

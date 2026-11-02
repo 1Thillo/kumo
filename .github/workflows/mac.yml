@@ -1,0 +1,50 @@
+# Builds and tests Kumo for macOS. Nothing here releases anything: the result is a build artifact
+# for testers. A real release needs a Developer ID signature and notarization first.
+name: mac
+
+on:
+  push:
+    branches: [kumo-mac]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: kumo-mac
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: kumo-mac
+      - name: Test
+        run: cargo test
+      - name: Build for Apple silicon and Intel
+        run: |
+          cargo build --release --target aarch64-apple-darwin
+          cargo build --release --target x86_64-apple-darwin
+      - name: Bundle
+        run: sh tools/bundle.sh
+      - name: Render the scene offscreen
+        run: |
+          mkdir -p ../qa
+          for hour in 18.2 12.5 0.5; do
+            target/Kumo.app/Contents/MacOS/kumo --shot "../qa/metal-$hour.bmp" --size 1920x1080 --warmup 6 --hour "$hour" --rotate=0 --quality=1
+          done
+      - name: Run the app for real
+        run: sh tools/live_test.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Kumo-mac
+          path: kumo-mac/target/Kumo-mac.zip
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qa
+          path: qa
+          retention-days: 7

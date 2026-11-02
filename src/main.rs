@@ -15,9 +15,11 @@ mod gfx;
 mod install;
 mod library;
 mod media;
+mod os;
 mod panel;
 mod render;
 mod scene;
+mod setup;
 mod tray;
 mod video;
 mod watch;
@@ -338,7 +340,7 @@ fn main() {
         }
         Some("--setup") => {
             open_log("setup.log");
-            return panel::run_setup();
+            return setup::run_setup();
         }
         Some("--install") => {
             if !install::install_and_start() {
@@ -346,7 +348,7 @@ fn main() {
             }
             return;
         }
-        Some("--uninstall") => return panel::run_uninstall(),
+        Some("--uninstall") => return setup::run_uninstall(),
         _ => {}
     }
     if args.stats || args.shot.is_some() {
@@ -380,7 +382,7 @@ fn main() {
     // any copy but the installed one is a download: show the setup
     if args.window.is_none() && !install::is_installed_copy() && std::env::var_os("KUMO_PORTABLE").is_none() {
         open_log("setup.log");
-        return panel::run_setup();
+        return setup::run_setup();
     }
 
     unsafe {

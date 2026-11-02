@@ -21,6 +21,8 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: kumo-mac
+      - name: Third-party notices are current
+        run: python3 ../tools/third_party.py --mac --check
       - name: Test
         run: cargo test
       - name: Build for Apple silicon and Intel

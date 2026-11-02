@@ -1,22 +1,19 @@
 //! The menu bar item, the only part of Kumo a Mac user sees while the wallpaper runs.
 
+use crate::os;
 use objc2::rc::Retained;
-use objc2::runtime::{AnyObject, NSObject};
+use objc2::runtime::{AnyObject, NSObject, NSObjectProtocol, ProtocolObject};
 use objc2::{define_class, msg_send, sel, AllocAnyThread, DefinedClass, MainThreadMarker, MainThreadOnly};
-use objc2_app_kit::{NSApplication, NSImage, NSMenu, NSMenuItem, NSStatusBar, NSVariableStatusItemLength};
-use objc2_foundation::{ns_string, NSData, NSLocale, NSSize, NSString};
+use objc2_app_kit::{NSApplication, NSApplicationDelegate, NSImage, NSMenu, NSMenuItem, NSStatusBar, NSVariableStatusItemLength};
+use objc2_foundation::{ns_string, NSData, NSSize, NSString};
 use std::cell::{Cell, RefCell};
 
 static ICON: &[u8] = include_bytes!("../../../assets/kumo-icon.png");
 
 const ICON_SIZE: f64 = 18.0;
 
-fn german() -> bool {
-    NSLocale::preferredLanguages().iter().next().is_some_and(|l| l.to_string().starts_with("de"))
-}
-
 fn title(paused: bool) -> Retained<NSString> {
-    let text = match (german(), paused) {
+    let text = match (os::system_german(), paused) {
         (true, false) => "Pausieren",
         (true, true) => "Fortsetzen",
         (false, false) => "Pause",
@@ -37,7 +34,23 @@ define_class!(
     #[ivars = Ivars]
     struct MenuTarget;
 
+    unsafe impl NSObjectProtocol for MenuTarget {}
+
+    unsafe impl NSApplicationDelegate for MenuTarget {
+        // Kumo.app was opened again while it runs: there is no window to show but the panel
+        #[unsafe(method(applicationShouldHandleReopen:hasVisibleWindows:))]
+        fn should_handle_reopen(&self, _app: &NSApplication, _visible: bool) -> bool {
+            os::open_panel(false);
+            true
+        }
+    }
+
     impl MenuTarget {
+        #[unsafe(method(openPanel:))]
+        fn open_panel(&self, _sender: Option<&AnyObject>) {
+            os::open_panel(false);
+        }
+
         #[unsafe(method(togglePause:))]
         fn toggle_pause(&self, _sender: Option<&AnyObject>) {
             if let Some(toggle) = self.ivars().toggle.get() {
@@ -62,19 +75,21 @@ impl MenuTarget {
     }
 }
 
-pub fn install(paused: bool, toggle: fn() -> bool, mtm: MainThreadMarker) {
+pub fn install(app: &NSApplication, paused: bool, toggle: fn() -> bool, mtm: MainThreadMarker) {
     let target = MenuTarget::new(toggle, mtm);
+    app.setDelegate(Some(ProtocolObject::from_ref(&*target)));
+    let de = os::system_german();
+    let entry = |text: &NSString, action, key: &NSString| {
+        let item = unsafe { NSMenuItem::initWithTitle_action_keyEquivalent(NSMenuItem::alloc(mtm), text, Some(action), key) };
+        unsafe { item.setTarget(Some(&target)) };
+        item
+    };
     let menu = NSMenu::new(mtm);
-    let pause = unsafe { NSMenuItem::initWithTitle_action_keyEquivalent(NSMenuItem::alloc(mtm), &title(paused), Some(sel!(togglePause:)), ns_string!("")) };
-    let quit_text = NSString::from_str(if german() { "Kumo beenden" } else { "Quit Kumo" });
-    let quit = unsafe { NSMenuItem::initWithTitle_action_keyEquivalent(NSMenuItem::alloc(mtm), &quit_text, Some(sel!(quit:)), ns_string!("q")) };
-    unsafe {
-        pause.setTarget(Some(&target));
-        quit.setTarget(Some(&target));
-    }
+    menu.addItem(&entry(&NSString::from_str(if de { "Kumo öffnen" } else { "Open Kumo" }), sel!(openPanel:), ns_string!("")));
+    let pause = entry(&title(paused), sel!(togglePause:), ns_string!(""));
     menu.addItem(&pause);
     menu.addItem(&NSMenuItem::separatorItem(mtm));
-    menu.addItem(&quit);
+    menu.addItem(&entry(&NSString::from_str(if de { "Kumo beenden" } else { "Quit Kumo" }), sel!(quit:), ns_string!("q")));
     target.ivars().item.replace(Some(pause));
 
     let item = NSStatusBar::systemStatusBar().statusItemWithLength(NSVariableStatusItemLength);

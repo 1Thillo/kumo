@@ -1,10 +1,11 @@
-//! Control panel (`kumo.exe --panel`) and setup wizard. Both are separate, short-lived processes
-//! drawn by Slint's software renderer, so they need no GPU context and give back everything on
-//! close. The panel edits config.json and the library, then nudges the engine to reload.
+//! Control panel (`kumo --panel`). It is a separate, short-lived process drawn by Slint's software
+//! renderer, so it needs no GPU context and gives back everything on close. The panel edits
+//! config.json and the library, then nudges the engine to reload. What differs per system is in
+//! `os`; this file is shared with the Mac version.
 
 use crate::config::{self, Config, Fit, Layout, PowerRule, TimeMode};
 use crate::library::{self, Item, Kind};
-use crate::{autostart, desktop, engine, install, IdentifyWindow, PanelWindow, Setup, SetupWindow, State};
+use crate::{autostart, desktop, install, os, IdentifyWindow, PanelWindow, State};
 use slint::winit_030::{winit, EventResult, WinitWindowAccessor};
 use slint::{ComponentHandle, Image, ModelRc, Timer, TimerMode, VecModel};
 use std::cell::RefCell;
@@ -12,65 +13,41 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use std::rc::Rc;
 use std::time::{Duration, Instant};
-use windows::core::{w, HSTRING, PCWSTR};
-use windows::Win32::Foundation::*;
-use windows::Win32::System::Threading::*;
-use windows::Win32::UI::Shell::ShellExecuteW;
-use windows::Win32::UI::WindowsAndMessaging::*;
 
 const LAPSE: [f32; 4] = [60.0, 240.0, 600.0, 2400.0];
 const PETALS: [f32; 4] = [0.0, 0.5, 1.0, 1.6];
 const FPS: [u32; 3] = [15, 30, 60];
 const QUALITY: [f32; 3] = [1.0, 0.8, 0.62];
 const SPEED: [f32; 4] = [0.5, 1.0, 1.5, 2.0];
-const OTHER_APPS: [(&str, &str); 3] = [("lively.exe", "Lively Wallpaper"), ("wallpaper32.exe", "Wallpaper Engine"), ("wallpaper64.exe", "Wallpaper Engine")];
 
 // ---------------------------------------------------------------- language
 
-fn german(cfg: &Config) -> bool {
+pub(crate) fn german(cfg: &Config) -> bool {
     match cfg.language.as_str() {
         "de" => true,
         "en" => false,
-        _ => (unsafe { windows::Win32::Globalization::GetUserDefaultUILanguage() } & 0x3ff) == 0x07,
+        _ => os::system_german(),
     }
 }
 
-fn apply_language(cfg: &Config) {
+pub(crate) fn apply_language(cfg: &Config) {
     let _ = slint::select_bundled_translation(if german(cfg) { "de" } else { "en" });
 }
 
 /// Small strings built on the Rust side (the .slint files use @tr and lang/de).
-struct Tr(bool);
+pub(crate) struct Tr(pub bool);
 
 impl Tr {
-    fn t(&self, de: &'static str, en: &'static str) -> &'static str {
+    pub(crate) fn t(&self, de: &'static str, en: &'static str) -> &'static str {
         if self.0 { de } else { en }
     }
 }
 
-fn system_dark() -> bool {
-    use windows::Win32::System::Registry::*;
-    let mut v = 1u32;
-    let mut len = 4u32;
-    unsafe {
-        let _ = RegGetValueW(
-            HKEY_CURRENT_USER,
-            w!("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"),
-            w!("AppsUseLightTheme"),
-            RRF_RT_REG_DWORD,
-            None,
-            Some(&mut v as *mut u32 as *mut _),
-            Some(&mut len),
-        );
-    }
-    v == 0
-}
-
-fn dark(cfg: &Config) -> bool {
+pub(crate) fn dark(cfg: &Config) -> bool {
     match cfg.theme.as_str() {
         "dark" => true,
         "light" => false,
-        _ => system_dark(),
+        _ => os::system_dark(),
     }
 }
 
@@ -81,7 +58,7 @@ fn title_bar(window: &slint::Window, dark: bool) -> bool {
 }
 
 /// The native window only exists once the event loop runs.
-fn title_bar_soon<T: ComponentHandle + 'static>(weak: slint::Weak<T>, dark: bool) {
+pub(crate) fn title_bar_soon<T: ComponentHandle + 'static>(weak: slint::Weak<T>, dark: bool) {
     let timer = Rc::new(Timer::default());
     let t = timer.clone();
     timer.start(TimerMode::Repeated, Duration::from_millis(20), move || {
@@ -91,41 +68,17 @@ fn title_bar_soon<T: ComponentHandle + 'static>(weak: slint::Weak<T>, dark: bool
     });
 }
 
-/// Windows 10 has neither of the two fonts the design uses.
-fn apply_fonts(theme: crate::Theme) {
-    use windows::Win32::UI::Shell::FOLDERID_Fonts;
-    let fonts = install::known_folder(&FOLDERID_Fonts).unwrap_or_default();
-    if !fonts.join("SegoeIcons.ttf").exists() {
-        theme.set_icon_font("Segoe MDL2 Assets".into());
-    }
-    if !fonts.join("SegUIVar.ttf").exists() {
-        theme.set_ui_font("Segoe UI".into());
-    }
-}
-
 // ---------------------------------------------------------------- helpers
-
-fn open(target: &str, args: Option<&str>) {
-    let t = HSTRING::from(target);
-    let a = args.map(HSTRING::from);
-    unsafe {
-        ShellExecuteW(None, w!("open"), &t, a.as_ref().map_or(PCWSTR::null(), |a| PCWSTR(a.as_ptr())), PCWSTR::null(), SW_SHOWNORMAL);
-    }
-}
 
 /// Opens a text that is built into the exe: Kumo is one file, with nothing next to it.
 fn open_text(name: &str, text: &str) {
     let path = std::env::temp_dir().join(name);
     if std::fs::write(&path, text).is_ok() {
-        open(&install::visible_path(&path).display().to_string(), None);
+        os::open(&install::visible_path(&path).display().to_string(), None);
     }
 }
 
-fn confirm(title: &str, text: &str) -> bool {
-    unsafe { MessageBoxW(None, &HSTRING::from(text), &HSTRING::from(title), MB_YESNO | MB_ICONQUESTION | MB_SETFOREGROUND) == IDYES }
-}
-
-fn size_text(bytes: u64, de: bool) -> String {
+pub(crate) fn size_text(bytes: u64, de: bool) -> String {
     let text = if bytes >= 1 << 30 { format!("{:.1} GB", bytes as f64 / (1u64 << 30) as f64) } else { format!("{:.1} MB", bytes as f64 / (1u64 << 20) as f64) };
     if de { text.replace('.', ",") } else { text }
 }
@@ -138,98 +91,9 @@ fn list_text(items: &[String], tr: &Tr) -> String {
     }
 }
 
-/// Newest last, so "0.2.0" compares with "0.10.0" as a person would expect.
-fn version_key(v: &str) -> Vec<u32> {
-    v.split('.').map(|p| p.parse().unwrap_or(0)).collect()
-}
-
-fn running_processes() -> Vec<String> {
-    use windows::Win32::System::Diagnostics::ToolHelp::*;
-    let mut names = Vec::new();
-    unsafe {
-        let Ok(snap) = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0) else { return names };
-        let mut e = PROCESSENTRY32W { dwSize: std::mem::size_of::<PROCESSENTRY32W>() as u32, ..Default::default() };
-        let mut ok = Process32FirstW(snap, &mut e).is_ok();
-        while ok {
-            let n = e.szExeFile.iter().position(|&c| c == 0).unwrap_or(e.szExeFile.len());
-            names.push(String::from_utf16_lossy(&e.szExeFile[..n]).to_ascii_lowercase());
-            ok = Process32NextW(snap, &mut e).is_ok();
-        }
-        let _ = CloseHandle(snap);
-    }
-    names
-}
-
-fn other_wallpaper_app() -> Option<&'static str> {
-    let procs = running_processes();
-    OTHER_APPS.iter().find(|(exe, _)| procs.iter().any(|p| p == exe)).map(|(_, name)| *name)
-}
-
 /// Wallpapers the engine could not show, with the reason.
 fn failed_wallpapers() -> Vec<(String, String)> {
     std::fs::read_to_string(config::dir().join("status.json")).ok().and_then(|t| serde_json::from_str(&t).ok()).unwrap_or_default()
-}
-
-/// A second panel start brings the open one to the front instead.
-fn focus_existing(title: &str) -> bool {
-    unsafe extern "system" fn cb(h: HWND, data: LPARAM) -> BOOL {
-        let (title, pids, found) = &mut *(data.0 as *mut (Vec<u16>, Vec<u32>, HWND));
-        let mut buf = [0u16; 64];
-        let n = GetWindowTextW(h, &mut buf) as usize;
-        let mut cls = [0u16; 32];
-        let c = GetClassNameW(h, &mut cls) as usize;
-        let mut pid = 0;
-        GetWindowThreadProcessId(h, Some(&mut pid));
-        if &buf[..n] == title.as_slice() && String::from_utf16_lossy(&cls[..c]) != "KumoWallpaper" && pids.contains(&pid) && IsWindowVisible(h).as_bool() {
-            *found = h;
-            return false.into();
-        }
-        true.into()
-    }
-    let mut data: (Vec<u16>, Vec<u32>, HWND) = (title.encode_utf16().collect(), install::running_copies(&[]), HWND::default());
-    unsafe {
-        let _ = EnumWindows(Some(cb), LPARAM(&mut data as *mut _ as isize));
-        if !data.2.is_invalid() {
-            crate::log(&format!("kumo: \"{title}\" is already open, showing it"));
-            let _ = ShowWindow(data.2, SW_RESTORE);
-            let _ = SetForegroundWindow(data.2);
-            return true;
-        }
-    }
-    false
-}
-
-// ---------------------------------------------------------------- engine stats
-
-struct EngineStats {
-    pid: u32,
-    last: Option<(Instant, f64)>,
-}
-
-impl EngineStats {
-    /// (memory MB, CPU % of the PC) of the running engine.
-    fn sample(&mut self) -> Option<(f64, f64)> {
-        let h = crate::engine_window()?;
-        let mut pid = 0;
-        unsafe { GetWindowThreadProcessId(h, Some(&mut pid)) };
-        if pid != self.pid {
-            self.pid = pid;
-            self.last = None;
-        }
-        unsafe {
-            let p = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, pid).ok()?;
-            let mem = engine::process_memory(p).map(|m| m.1);
-            let (mut c, mut e, mut k, mut u) = Default::default();
-            let _ = GetProcessTimes(p, &mut c, &mut e, &mut k, &mut u);
-            let _ = CloseHandle(p);
-            let secs = |t: FILETIME| ((t.dwHighDateTime as u64) << 32 | t.dwLowDateTime as u64) as f64 / 1e7;
-            let now = (Instant::now(), secs(k) + secs(u));
-            let cores = std::thread::available_parallelism().map(|n| n.get()).unwrap_or(1) as f64;
-            let cpu = self.last.map(|(t, s)| (now.1 - s) / now.0.duration_since(t).as_secs_f64().max(0.001) / cores * 100.0).unwrap_or(0.0);
-            self.last = Some(now);
-            Some((mem?, cpu))
-        }
-    }
 }
 
 // ---------------------------------------------------------------- panel
@@ -258,7 +122,7 @@ struct Ctx {
     info: Info,
     dismissed: Vec<Info>,
     detail_id: String,
-    stats: EngineStats,
+    stats: os::EngineStats,
     tr: Tr,
     /// looked up every 30 s, a process list is too much for the 2 second tick
     other_app: Option<&'static str>,
@@ -285,12 +149,12 @@ impl Ctx {
     fn save(&mut self) {
         self.cfg.save();
         self.config_time = config_time();
-        crate::notify_engine();
+        os::notify_engine();
     }
 
     fn other_app(&mut self, fresh: bool) -> Option<&'static str> {
         if fresh || self.other_app_at.is_none_or(|t| t.elapsed() > Duration::from_secs(30)) {
-            self.other_app = other_wallpaper_app();
+            self.other_app = os::other_wallpaper_app();
             self.other_app_at = Some(Instant::now());
         }
         self.other_app
@@ -433,7 +297,7 @@ fn refresh(app: &PanelWindow, ctx: &mut Ctx) {
     };
     st.set_battery_index(rule(cfg.on_battery));
     st.set_saver_index(rule(cfg.energy_saver));
-    st.set_has_battery(has_battery());
+    st.set_has_battery(os::has_battery());
 
     // settings
     st.set_autostart(autostart::autostart());
@@ -449,6 +313,7 @@ fn refresh(app: &PanelWindow, ctx: &mut Ctx) {
     });
     st.set_library_path(install::visible_path(&library::dir()).display().to_string().into());
     st.set_packaged(install::packaged());
+    st.set_mac(cfg!(target_os = "macos"));
     st.set_library_size(size_text(install::data_size(), tr.0).into());
     st.set_version(env!("CARGO_PKG_VERSION").into());
 
@@ -456,12 +321,6 @@ fn refresh(app: &PanelWindow, ctx: &mut Ctx) {
         fill_detail(app, ctx);
     }
     show_info(app, ctx);
-}
-
-fn has_battery() -> bool {
-    use windows::Win32::System::Power::{GetSystemPowerStatus, SYSTEM_POWER_STATUS};
-    let mut s = SYSTEM_POWER_STATUS::default();
-    unsafe { GetSystemPowerStatus(&mut s).is_ok() && s.BatteryFlag != 128 }
 }
 
 fn fill_detail(app: &PanelWindow, ctx: &mut Ctx) {
@@ -536,7 +395,7 @@ fn fill_detail(app: &PanelWindow, ctx: &mut Ctx) {
 fn show_info(app: &PanelWindow, ctx: &mut Ctx) {
     let st = app.global::<State>();
     let tr = Tr(ctx.tr.0);
-    let running = crate::engine_window().is_some();
+    let running = os::engine_running();
     st.set_running(running);
     let failed = failed_wallpapers();
     let next = if matches!(ctx.info, Info::Message(..) | Info::Added(..)) {
@@ -573,7 +432,7 @@ fn show_info(app: &PanelWindow, ctx: &mut Ctx) {
             } else {
                 format!("“{title}” could not be shown, so the built-in scene is running. Reason: {why}")
             },
-            if why.contains("decod") { tr.t("Im Store suchen", "Search the Store") } else { "" },
+            if why.contains("decod") { os::codec_search(&tr) } else { "" },
         ),
         Info::Added(_, title) => (
             4,
@@ -585,27 +444,6 @@ fn show_info(app: &PanelWindow, ctx: &mut Ctx) {
     st.set_info_kind(kind);
     st.set_info_text(text.into());
     st.set_info_action(action.into());
-}
-
-fn start_engine() {
-    let exe = install::installed_exe();
-    let exe = if exe.exists() { exe } else { std::env::current_exe().unwrap_or_default() };
-    open(&exe.display().to_string(), None);
-}
-
-/// Asks the engine to quit and waits for it.
-fn stop_engine() {
-    if let Some(h) = crate::engine_window() {
-        let mut pid = 0;
-        unsafe {
-            GetWindowThreadProcessId(h, Some(&mut pid));
-            let _ = PostMessageW(h, WM_CLOSE, WPARAM(0), LPARAM(0));
-            if let Ok(p) = OpenProcess(PROCESS_SYNCHRONIZE, false, pid) {
-                WaitForSingleObject(p, 5000);
-                let _ = CloseHandle(p);
-            }
-        }
-    }
 }
 
 fn apply_everywhere(cfg: &mut Config, id: &str) {
@@ -675,7 +513,7 @@ fn import(weak: slint::Weak<PanelWindow>, ctx: Rc<RefCell<Ctx>>, files: Vec<Path
                         _ => crate::media::thumbnail_via_shell(&item.path(), &item.thumbnail()),
                     };
                     if let Err(e) = r {
-                        crate::log(&format!("kumo: no thumbnail for {}: {}", item.title, e.message()));
+                        crate::log(&format!("kumo: no thumbnail for {}: {e}", item.title));
                     }
                     added = Some(item);
                 }
@@ -705,44 +543,8 @@ fn import(weak: slint::Weak<PanelWindow>, ctx: Rc<RefCell<Ctx>>, files: Vec<Path
         });
     });
 }
-/// Native multi-select file picker.
-fn pick_files(de: bool) -> Vec<PathBuf> {
-    use windows::Win32::System::Com::*;
-    use windows::Win32::UI::Shell::Common::COMDLG_FILTERSPEC;
-    use windows::Win32::UI::Shell::*;
-    let mut out = Vec::new();
-    unsafe {
-        let _ = CoInitializeEx(None, COINIT_APARTMENTTHREADED);
-        let Ok(dlg) = CoCreateInstance::<_, IFileOpenDialog>(&FileOpenDialog, None, CLSCTX_INPROC_SERVER) else { return out };
-        let name = HSTRING::from(if de { "Videos, Bilder und Kumo-Szenen" } else { "Videos, pictures and Kumo scenes" });
-        let spec = HSTRING::from("*.mp4;*.m4v;*.mov;*.webm;*.mkv;*.wmv;*.avi;*.jpg;*.jpeg;*.png;*.bmp;*.webp;*.tif;*.tiff;*.heic;*.avif;*.kumo");
-        let filters = [COMDLG_FILTERSPEC { pszName: PCWSTR(name.as_ptr()), pszSpec: PCWSTR(spec.as_ptr()) }];
-        let _ = dlg.SetFileTypes(&filters);
-        let _ = dlg.SetOptions(dlg.GetOptions().unwrap_or_default() | FOS_ALLOWMULTISELECT | FOS_FILEMUSTEXIST);
-        // a package starts in System32, so the first look should not be there
-        if let Some(videos) = install::known_folder(&windows::Win32::UI::Shell::FOLDERID_Videos) {
-            if let Ok(folder) = windows::Win32::UI::Shell::SHCreateItemFromParsingName::<_, _, windows::Win32::UI::Shell::IShellItem>(&HSTRING::from(videos.as_os_str()), None) {
-                let _ = dlg.SetDefaultFolder(&folder);
-            }
-        }
-        if dlg.Show(None).is_err() {
-            return out;
-        }
-        let Ok(items) = dlg.GetResults() else { return out };
-        for i in 0..items.GetCount().unwrap_or(0) {
-            if let Ok(item) = items.GetItemAt(i) {
-                if let Ok(p) = item.GetDisplayName(SIGDN_FILESYSPATH) {
-                    out.push(PathBuf::from(p.to_string().unwrap_or_default()));
-                    windows::Win32::System::Com::CoTaskMemFree(Some(p.0 as *const _));
-                }
-            }
-        }
-    }
-    out
-}
-
 pub fn run_panel() {
-    if focus_existing("Kumo") {
+    if os::focus_existing("Kumo") {
         return;
     }
     library::sweep();
@@ -752,7 +554,7 @@ pub fn run_panel() {
         Err(e) => crate::fail(&format!("The control panel could not open: {e}")),
     };
     apply_language(&cfg);
-    apply_fonts(app.global::<crate::Theme>());
+    os::apply_fonts(app.global::<crate::Theme>());
     app.invoke_set_dark(dark(&cfg));
     let ctx = Rc::new(RefCell::new(Ctx {
         tr: Tr(german(&cfg)),
@@ -762,7 +564,7 @@ pub fn run_panel() {
         info: Info::None,
         dismissed: Vec::new(),
         detail_id: String::new(),
-        stats: EngineStats { pid: 0, last: None },
+        stats: os::EngineStats::default(),
         other_app: None,
         other_app_at: None,
         items: 0,
@@ -829,7 +631,7 @@ pub fn run_panel() {
         let de = german(&Config::load());
         let title = if de { format!("„{}“ entfernen?", item.title) } else { format!("Remove “{}”?", item.title) };
         let body = if de { "Die Kopie in der Kumo-Bibliothek wird gelöscht. Deine Originaldatei bleibt erhalten." } else { "The copy in the Kumo library is deleted. Your original file stays where it is." };
-        if !confirm(&title, body) {
+        if !os::confirm(&title, body) {
             return;
         }
         ch(&|app, c| {
@@ -867,15 +669,14 @@ pub fn run_panel() {
 
     st.on_explorer(move |id| {
         if let Some(item) = library::get(&id) {
-            let target = if item.builtin { item.folder() } else { item.path() };
-            open("explorer.exe", Some(&format!("/select,\"{}\"", install::visible_path(&target).display())));
+            os::reveal(&install::visible_path(&if item.builtin { item.folder() } else { item.path() }));
         }
     });
 
     let (w2, c2) = (weak.clone(), ctx.clone());
     st.on_add_files(move || {
         let de = c2.borrow().tr.0;
-        let files = pick_files(de);
+        let files = os::pick_files(de);
         import(w2.clone(), c2.clone(), files);
     });
 
@@ -948,9 +749,9 @@ pub fn run_panel() {
             let st = app.global::<State>();
             if st.get_autostart() != autostart::autostart() {
                 autostart::set_autostart(st.get_autostart());
-                // switched off in Task Manager: only Windows can switch that back on
+                // switched off in the system settings: only they can switch it back on
                 if st.get_autostart() && !autostart::autostart() {
-                    open("ms-settings:startupapps", None);
+                    os::open_autostart_settings();
                 }
             }
             c.cfg.language = ["system", "de", "en"][st.get_language_index().clamp(0, 2) as usize].into();
@@ -1013,8 +814,8 @@ pub fn run_panel() {
         let Some(app) = w2.upgrade() else { return };
         let mut c = c2.borrow_mut();
         match c.info.clone() {
-            Info::EngineDown => start_engine(),
-            Info::Failed(..) => open("ms-windows-store://search/?query=video%20extensions", None),
+            Info::EngineDown => os::start_engine(),
+            Info::Failed(..) => os::open_codec_search(),
             Info::Added(id, _) => {
                 c.cfg = Config::load();
                 apply_everywhere(&mut c.cfg, &id);
@@ -1039,16 +840,16 @@ pub fn run_panel() {
         show_info(&app, &mut c);
     });
 
-    st.on_open_log(|| open(&install::visible_path(&config::dir().join("kumo.log")).display().to_string(), None));
+    st.on_open_log(|| os::open(&install::visible_path(&config::dir().join("kumo.log")).display().to_string(), None));
     st.on_open_library(|| {
         let _ = std::fs::create_dir_all(library::dir());
-        open(&install::visible_path(&library::dir()).display().to_string(), None)
+        os::open(&install::visible_path(&library::dir()).display().to_string(), None)
     });
     st.on_restart_engine(|| {
-        stop_engine();
-        start_engine();
+        os::stop_engine();
+        os::start_engine();
     });
-    st.on_quit_engine(stop_engine);
+    st.on_quit_engine(os::stop_engine);
     let ch = change.clone();
     st.on_reset_all(move || {
         let de = german(&Config::load());
@@ -1057,24 +858,17 @@ pub fn run_panel() {
         } else {
             ("Reset all settings?", "Frame rate, quality, pause rules, screens and everything you customized go back to the defaults, and the pagoda becomes your wallpaper again. Your library stays.")
         };
-        if confirm(t, b) {
+        if os::confirm(t, b) {
             ch(&|_, c| {
                 let (lang, theme) = (c.cfg.language.clone(), c.cfg.theme.clone());
                 c.cfg = Config { language: lang, theme, ..Config::default() };
             });
         }
     });
-    st.on_uninstall(|| {
-        let exe = install::installed_exe();
-        if exe.exists() && !install::packaged() {
-            open(&exe.display().to_string(), Some("--uninstall"));
-        } else {
-            open("ms-settings:appsfeatures", None);
-        }
-    });
+    st.on_uninstall(os::uninstall);
     st.on_open_license(|| open_text("Kumo-License.txt", include_str!("../LICENSE")));
-    st.on_open_notices(|| open_text("Kumo-Third-Party-Notices.txt", include_str!("../assets/third-party-notices.txt")));
-    st.on_open_source(|| open("https://github.com/Hamido212/kumo", None));
+    st.on_open_notices(|| open_text("Kumo-Third-Party-Notices.txt", os::NOTICES));
+    st.on_open_source(|| os::open("https://github.com/Hamido212/kumo", None));
 
     // drag & drop from Explorer
     let (w2, c2) = (weak.clone(), ctx.clone());
@@ -1094,8 +888,8 @@ pub fn run_panel() {
                 st.set_drag_ok(true);
             }
             winit::event::WindowEvent::ThemeChanged(_) if c2.borrow().cfg.theme == "system" => {
-                app.invoke_set_dark(system_dark());
-                title_bar(app.window(), system_dark());
+                app.invoke_set_dark(os::system_dark());
+                title_bar(app.window(), os::system_dark());
             }
             winit::event::WindowEvent::DroppedFile(p) => {
                 st.set_dragging(false);
@@ -1143,8 +937,7 @@ pub fn run_panel() {
                 st.set_cpu("–".into());
             }
         }
-        let own = engine::memory().1;
-        st.set_panel_ram(format!("{own:.0} MB").into());
+        st.set_panel_ram(format!("{:.0} MB", os::own_memory()).into());
         let was = st.get_running();
         show_info(&app, &mut c);
         if was != st.get_running() {
@@ -1161,11 +954,11 @@ pub fn run_panel() {
         Timer::single_shot(Duration::from_millis(500), move || {
             let de = german(&Config::load());
             let (t, b) = if de {
-                ("Kumo mit Windows starten?", "Dein Live-Hintergrund ist dann nach jeder Anmeldung von selbst wieder da. Du kannst das jederzeit unter Einstellungen ändern.")
+                (os::AUTOSTART_QUESTION.0, "Dein Live-Hintergrund ist dann nach jeder Anmeldung von selbst wieder da. Du kannst das jederzeit unter Einstellungen ändern.")
             } else {
-                ("Start Kumo with Windows?", "Your live wallpaper is then back by itself after every sign-in. You can change this at any time under Settings.")
+                (os::AUTOSTART_QUESTION.1, "Your live wallpaper is then back by itself after every sign-in. You can change this at any time under Settings.")
             };
-            if confirm(t, b) {
+            if os::confirm(t, b) {
                 autostart::set_autostart(true);
             }
             if let Some(app) = w2.upgrade() {
@@ -1187,186 +980,9 @@ pub fn run_panel() {
     drop(timer);
 }
 
-// ---------------------------------------------------------------- setup wizard
-
-/// Waits for the installed engine, then shows "Kumo is running".
-fn wait_for_engine(weak: slint::Weak<SetupWindow>) {
-    let started = Instant::now();
-    let timer = Rc::new(Timer::default());
-    let t = timer.clone();
-    timer.start(TimerMode::Repeated, Duration::from_millis(200), move || {
-        let Some(app) = weak.upgrade() else { return };
-        let s = app.global::<Setup>();
-        if crate::engine_window().is_some() {
-            s.set_page(6);
-            t.stop();
-        } else if started.elapsed() > Duration::from_secs(10) {
-            let de = german(&Config::load());
-            s.set_error_text(Tr(de).t("Kumo ist installiert, aber nicht gestartet. Öffne es im Startmenü.", "Kumo is installed but did not start. Open it from the Start menu.").into());
-            s.set_page(3);
-            t.stop();
-        }
-    });
-}
-
-pub fn run_setup() {
-    if ["Kumo installieren", "Install Kumo", "Kumo aktualisieren", "Update Kumo", "Kumo-Einrichtung", "Kumo setup", "Kumo deinstallieren", "Uninstall Kumo"].into_iter().any(focus_existing) {
-        return;
-    }
-    let (app, cfg) = setup_window();
-    let tr = Tr(german(&cfg));
-    let s = app.global::<Setup>();
-    s.set_version(env!("CARGO_PKG_VERSION").into());
-    let installed = install::installed_version();
-    if let Some(v) = &installed {
-        // nothing to update: the page offers to open, repair or remove Kumo instead
-        let own = version_key(env!("CARGO_PKG_VERSION"));
-        if version_key(v) >= own {
-            s.set_newer_installed(version_key(v) > own);
-            s.set_page(7);
-        }
-    }
-    s.set_installed_version(installed.unwrap_or_default().into());
-    s.set_install_dir(install::install_dir().display().to_string().into());
-    if install::installed_version().is_some() {
-        // an update keeps what the user chose
-        s.set_autostart(autostart::autostart());
-        s.set_desktop_shortcut(install::has_desktop_shortcut());
-    }
-    if let Some(name) = other_wallpaper_app() {
-        s.set_warning(
-            if tr.0 { format!("{name} läuft gerade. Beende es vor der Installation, damit sich beide Programme nicht stören.") } else { format!("{name} is running. Quit it before installing so the two programs do not get in each other's way.") }
-                .into(),
-        );
-    }
-    let weak = app.as_weak();
-
-    let w2 = weak.clone();
-    s.on_install(move || {
-        let Some(app) = w2.upgrade() else { return };
-        let s = app.global::<Setup>();
-        s.set_page(2);
-        s.set_step(0);
-        let (autostart, desktop) = (s.get_autostart(), s.get_desktop_shortcut());
-        let engine_was_running = crate::engine_window().is_some();
-        let w3 = w2.clone();
-        std::thread::spawn(move || {
-            let result = install::install_with(autostart, desktop);
-            let _ = slint::invoke_from_event_loop(move || {
-                let Some(app) = w3.upgrade() else { return };
-                let s = app.global::<Setup>();
-                match result {
-                    Ok(()) => {
-                        // everything is done already; the list shows what happened
-                        let step = Rc::new(std::cell::Cell::new(1));
-                        let t = Rc::new(Timer::default());
-                        let (w4, t2) = (w3.clone(), t.clone());
-                        s.set_step(1);
-                        t.start(TimerMode::Repeated, Duration::from_millis(160), move || {
-                            let Some(app) = w4.upgrade() else { return };
-                            let s = app.global::<Setup>();
-                            step.set(step.get() + 1);
-                            s.set_step(step.get());
-                            if step.get() > 4 {
-                                t2.stop();
-                                // an update restarts through the running engine
-                                if !engine_was_running {
-                                    install::start_installed();
-                                }
-                                wait_for_engine(w4.clone());
-                            }
-                        });
-                        std::mem::forget(t);
-                    }
-                    Err(e) => {
-                        s.set_error_text(e.into());
-                        s.set_page(3);
-                    }
-                }
-            });
-        });
-    });
-
-    s.on_open_panel(move || {
-        if crate::engine_window().is_none() {
-            install::start_installed();
-        }
-        install::open_installed_panel();
-        let _ = slint::quit_event_loop();
-    });
-    run_setup_window(app, &cfg);
-}
-
-fn setup_window() -> (SetupWindow, Config) {
-    let cfg = Config::load();
-    let app = match SetupWindow::new() {
-        Ok(a) => a,
-        Err(e) => crate::fail(&format!("The setup could not open: {e}")),
-    };
-    apply_language(&cfg);
-    apply_fonts(app.global::<crate::Theme>());
-    app.invoke_set_dark(dark(&cfg));
-    (app, cfg)
-}
-
-/// What the setup and the uninstaller share: the uninstall page and the way out.
-fn run_setup_window(app: SetupWindow, cfg: &Config) {
-    let tr = Tr(german(cfg));
-    let s = app.global::<Setup>();
-    s.set_data_size(size_text(install::data_size(), tr.0).into());
-    let weak = app.as_weak();
-    let de = tr.0;
-    s.on_uninstall_now(move || {
-        let Some(app) = weak.upgrade() else { return };
-        let s = app.global::<Setup>();
-        s.set_uninstalling(true);
-        s.set_page(2);
-        let delete_data = s.get_delete_data();
-        let w2 = weak.clone();
-        std::thread::spawn(move || {
-            let ok = install::uninstall(delete_data);
-            let _ = slint::invoke_from_event_loop(move || {
-                let Some(app) = w2.upgrade() else { return };
-                let s = app.global::<Setup>();
-                if !ok {
-                    s.set_error_text(Tr(de).t("Kumo konnte nicht entfernt werden. Schließe alle Kumo-Fenster und versuche es noch einmal.", "Kumo could not be removed. Close all Kumo windows and try again.").into());
-                }
-                s.set_page(if ok { 9 } else { 3 });
-            });
-        });
-    });
-    s.on_close(|| {
-        let _ = slint::quit_event_loop();
-    });
-    title_bar_soon(app.as_weak(), dark(cfg));
-    if let Some(p) = std::env::var("KUMO_UI_PAGE").ok().and_then(|v| v.parse::<i32>().ok()) {
-        s.set_page(p);
-    }
-    let _ = app.run();
-}
-
-/// The window behind `kumo.exe --uninstall`, which is what Settings > Apps starts.
-pub fn run_uninstall() {
-    if ["Kumo deinstallieren", "Uninstall Kumo"].into_iter().any(focus_existing) {
-        return;
-    }
-    let (app, cfg) = setup_window();
-    let s = app.global::<Setup>();
-    s.set_uninstalling(true);
-    s.set_page(8);
-    run_setup_window(app, &cfg);
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn versions_compare_as_numbers() {
-        assert!(version_key("0.10.0") > version_key("0.2.0"));
-        assert!(version_key("0.2.0") == version_key("0.2.0"));
-        assert!(version_key("1.0.0") > version_key("0.9.9"));
-    }
 
     #[test]
     fn lists_read_like_a_sentence() {

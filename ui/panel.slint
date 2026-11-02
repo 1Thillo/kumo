@@ -77,6 +77,7 @@ export global State {
     // settings / about
     in-out property <bool> autostart;
     in property <bool> packaged;
+    in property <bool> mac;
     in-out property <int> language-index;
     in-out property <int> theme-index;
     in property <string> library-path;
@@ -386,7 +387,7 @@ component Tile inherits Rectangle {
                 }
                 MenuRow {
                     icon: "\u{E838}";
-                    text: @tr("Show in Explorer");
+                    text: State.mac ? @tr("Show in Finder") : @tr("Show in Explorer");
                     clicked => {
                         menu.close();
                         State.explorer(root.data.id);
@@ -714,7 +715,7 @@ component DetailPage inherits Rectangle {
                 }
                 Btn {
                     icon: "\u{E838}";
-                    text: @tr("Show in Explorer");
+                    text: State.mac ? @tr("Show in Finder") : @tr("Show in Explorer");
                     clicked => { State.explorer(State.detail.id); }
                 }
                 if !State.detail.builtin: Btn {
@@ -1033,7 +1034,7 @@ component DisplaysPage inherits Rectangle {
                 }
                 Card {
                     title: @tr("Live wallpaper on this screen");
-                    description: @tr("Off: Windows shows its normal wallpaper here.");
+                    description: State.mac ? @tr("Off: macOS shows its normal wallpaper here.") : @tr("Off: Windows shows its normal wallpaper here.");
                     Toggle {
                         label: @tr("Live wallpaper on this screen");
                         checked <=> State.screen-on;
@@ -1243,10 +1244,10 @@ component SettingsPage inherits Rectangle {
             Rectangle { height: 4px; }
             Card {
                 icon: "\u{E7E8}";
-                title: @tr("Start with Windows");
+                title: State.mac ? @tr("Start at login") : @tr("Start with Windows");
                 description: @tr("Kumo starts quietly in the background after you sign in.");
                 Toggle {
-                    label: @tr("Start with Windows");
+                    label: State.mac ? @tr("Start at login") : @tr("Start with Windows");
                     checked <=> State.autostart;
                     toggled => { State.settings-changed(); }
                 }
@@ -1254,12 +1255,12 @@ component SettingsPage inherits Rectangle {
             Card {
                 icon: "\u{E774}";
                 title: @tr("Language");
-                description: @tr("For this window and the menu in the notification area.");
+                description: State.mac ? @tr("For this window and the menu bar item.") : @tr("For this window and the menu in the notification area.");
                 VerticalLayout {
                     alignment: center;
                     ComboBox {
                         width: 180px;
-                        model: [@tr("Same as Windows"), "Deutsch", "English"];
+                        model: [State.mac ? @tr("Same as macOS") : @tr("Same as Windows"), "Deutsch", "English"];
                         current-index <=> State.language-index;
                         selected => { State.settings-changed(); }
                     }
@@ -1272,7 +1273,7 @@ component SettingsPage inherits Rectangle {
                     alignment: center;
                     ComboBox {
                         width: 180px;
-                        model: [@tr("Same as Windows"), @tr("Light"), @tr("Dark")];
+                        model: [State.mac ? @tr("Same as macOS") : @tr("Same as Windows"), @tr("Light"), @tr("Dark")];
                         current-index <=> State.theme-index;
                         selected => { State.settings-changed(); }
                     }
@@ -1347,7 +1348,7 @@ component SettingsPage inherits Rectangle {
             Card {
                 icon: "\u{E74D}";
                 title: @tr("Uninstall Kumo");
-                description: State.packaged ? @tr("Opens the Windows settings. Your wallpapers and settings go with the app.") : @tr("Removes Kumo from this PC. You decide what happens to your wallpapers.");
+                description: State.mac ? @tr("Shows Kumo in the Finder. Move it to the Trash to remove it.") : State.packaged ? @tr("Opens the Windows settings. Your wallpapers and settings go with the app.") : @tr("Removes Kumo from this PC. You decide what happens to your wallpapers.");
                 VerticalLayout {
                     alignment: center;
                     Btn {
@@ -1399,7 +1400,7 @@ component AboutPage inherits Rectangle {
                             color: Theme.text2;
                         }
                         Text {
-                            text: @tr("Lightweight live wallpapers for Windows. 雲 (kumo) is Japanese for “cloud”.");
+                            text: State.mac ? @tr("Lightweight live wallpapers for the Mac. 雲 (kumo) is Japanese for “cloud”.") : @tr("Lightweight live wallpapers for Windows. 雲 (kumo) is Japanese for “cloud”.");
                             wrap: word-wrap;
                             color: Theme.text;
                         }
@@ -1446,7 +1447,7 @@ component AboutPage inherits Rectangle {
             Card {
                 icon: "\u{E74D}";
                 title: @tr("Uninstall Kumo");
-                description: State.packaged ? @tr("Opens the Windows settings. Your wallpapers and settings go with the app.") : @tr("Removes Kumo from this PC. You decide what happens to your wallpapers.");
+                description: State.mac ? @tr("Shows Kumo in the Finder. Move it to the Trash to remove it.") : State.packaged ? @tr("Opens the Windows settings. Your wallpapers and settings go with the app.") : @tr("Removes Kumo from this PC. You decide what happens to your wallpapers.");
                 VerticalLayout {
                     alignment: center;
                     Btn {

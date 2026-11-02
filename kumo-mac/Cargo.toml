@@ -1,5 +1,5 @@
 [package]
-name = "kumo-mac"
+name = "kumo"
 version = "0.1.0"
 edition = "2021"
 description = "Kumo for macOS: the same live wallpaper, drawn with Metal through wgpu"
@@ -28,12 +28,21 @@ objc2 = "0.6"
 objc2-foundation = { version = "0.3", features = ["NSArray", "NSData", "NSDate", "NSEnumerator", "NSGeometry", "NSLocale", "NSObject", "NSProcessInfo", "NSRunLoop", "NSString", "NSThread", "NSTimer", "block2"] }
 objc2-app-kit = { version = "0.3", features = ["NSApplication", "NSButton", "NSControl", "NSGraphics", "NSImage", "NSMenu", "NSMenuItem", "NSResponder", "NSRunningApplication", "NSScreen", "NSStatusBar", "NSStatusBarButton", "NSStatusItem", "NSView", "NSWindow", "objc2-core-foundation"] }
 objc2-core-foundation = "0.3"
+objc2-core-graphics = "0.3"
+objc2-core-media = "0.3"
+objc2-av-foundation = { version = "0.3", features = ["objc2-core-media"] }
+objc2-image-io = "0.3"
+objc2-quartz-core = "0.3"
+slint = { version = "=1.18.1", default-features = false, features = ["std", "backend-winit", "renderer-software", "compat-1-2", "accessibility", "unstable-winit-030"] }
 raw-window-handle = "0.6"
 
 # the renderer can be developed and compared with the Direct3D 11 version on a Windows PC
 [target.'cfg(windows)'.dependencies]
 wgpu = { version = "30", default-features = false, features = ["dx12", "wgsl"] }
 windows = { version = "0.58", features = ["Win32_Foundation", "Win32_System_SystemInformation"] }
+
+[build-dependencies]
+slint-build = "=1.18.1"
 
 [profile.release]
 opt-level = "s"

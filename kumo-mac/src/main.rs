@@ -21,7 +21,23 @@ mod gpu;
 mod render;
 
 #[cfg(target_os = "macos")]
+mod autostart;
+#[cfg(target_os = "macos")]
+mod desktop;
+#[cfg(target_os = "macos")]
+mod install;
+#[cfg(target_os = "macos")]
 mod mac;
+#[cfg(target_os = "macos")]
+mod media;
+#[cfg(target_os = "macos")]
+mod os;
+#[cfg(target_os = "macos")]
+#[path = "../../src/panel.rs"]
+mod panel;
+
+#[cfg(target_os = "macos")]
+slint::include_modules!();
 
 use config::{Config, Settings};
 
@@ -68,6 +84,32 @@ fn parse_args() -> Args {
         }
     }
     a
+}
+
+/// Ends the process with a message; only the panel gets here, when its window cannot open.
+pub fn fail(message: &str) -> ! {
+    log(message);
+    std::process::exit(1);
+}
+
+/// `--import file`: adds a file to the library and makes it the wallpaper of every screen.
+#[cfg(target_os = "macos")]
+fn import(path: &str) -> Result<(), String> {
+    let path = std::path::Path::new(path);
+    let item = library::import(path, |_| {})?;
+    let thumb = match item.kind {
+        library::Kind::Image => media::thumbnail_from_file(&item.path(), &item.thumbnail()),
+        _ => media::thumbnail_via_shell(&item.path(), &item.thumbnail()),
+    };
+    if let Err(e) = thumb {
+        log(&format!("no thumbnail for {}: {e}", item.title));
+    }
+    let mut cfg = Config::load();
+    cfg.wallpaper = item.id.clone();
+    cfg.save();
+    os::notify_engine();
+    println!("imported {} as {}", path.display(), item.id);
+    Ok(())
 }
 
 /// Renders one frame of the built-in scene offscreen and saves it (visual tests).
@@ -121,6 +163,20 @@ fn write_bmp(path: &str, w: u32, h: u32, rgba: &[u8]) -> std::io::Result<()> {
 }
 
 fn main() {
+    #[cfg(target_os = "macos")]
+    {
+        let args: Vec<String> = std::env::args().collect();
+        if args.iter().any(|a| a == "--panel") {
+            return panel::run_panel();
+        }
+        if let Some(at) = args.iter().position(|a| a == "--import") {
+            if let Err(e) = import(args.get(at + 1).map_or("", String::as_str)) {
+                eprintln!("kumo: {e}");
+                std::process::exit(1);
+            }
+            return;
+        }
+    }
     let a = parse_args();
     if let Some(path) = &a.shot {
         if let Err(e) = shot(path, a.size, a.warmup, &a.cfg, &a.settings) {
@@ -130,7 +186,7 @@ fn main() {
         return;
     }
     #[cfg(target_os = "macos")]
-    mac::run(a.cfg, a.settings);
+    mac::run(a.cfg);
     #[cfg(not(target_os = "macos"))]
     eprintln!("kumo: the wallpaper itself only runs on a Mac here, use --shot");
 }

@@ -3,8 +3,8 @@
 Work in progress on the `kumo-mac` branch. The Windows version at the repository root is not
 affected: this folder is its own Cargo workspace.
 
-**Shared with Windows** (`#[path]` includes of `../src`): scene format, simulation, sky, settings
-and the library.
+**Shared with Windows** (`#[path]` includes of `../src`): scene format, simulation, sky, settings,
+the library and the control panel with its Slint UI and translations.
 
 **Only here:** the renderer in wgpu (`src/render.rs`, `src/shaders.wgsl`, a port of the Direct3D 11
 one, compared pixel by pixel against it) and the Mac layer in `src/mac/`: a borderless window per
@@ -12,13 +12,19 @@ screen, one level above the system wallpaper and below the desktop icons, and th
 
 ## What is built (so far only tried on a virtual macOS runner)
 
-- The built-in pagoda scene on every screen, behind the desktop icons and on all Spaces.
-- Pausing while a screen is covered, in Low Power Mode and on battery (half frame rate by default).
-- Menu bar item with pause and quit.
+- The pagoda scene, own `.kumo` scenes, videos and pictures, per screen or on all of them.
+- The control panel of the Windows version: `ui/` and `src/panel.rs` are shared, what differs per
+  system is in `src/os.rs`.
+- Pausing while a screen is covered, in Low Power Mode and on battery.
+- Menu bar item, start at login through a LaunchAgent, thumbnails, a first-start welcome.
+
+Videos play through AVPlayer in a Core Animation layer: decoding in hardware, no render loop.
+macOS cannot play webm and most mkv files; such a video falls back to the built-in scene and the
+panel says why.
 
 ## What is missing
 
-Video and image wallpapers, the control panel, start at login, a Developer ID signature.
+A Developer ID signature and notarization, and tests on real Macs (`TESTEN.md`).
 
 ## Build
 

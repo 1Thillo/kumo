@@ -18,6 +18,9 @@ msgstr "Bildschirm {} · {}"
 msgid "Customize…"
 msgstr "Anpassen …"
 
+msgid "Show in Finder"
+msgstr "Im Finder zeigen"
+
 msgid "Show in Explorer"
 msgstr "Im Explorer zeigen"
 
@@ -204,6 +207,9 @@ msgstr "Ändern …"
 msgid "Live wallpaper on this screen"
 msgstr "Live-Hintergrund auf diesem Bildschirm"
 
+msgid "Off: macOS shows its normal wallpaper here."
+msgstr "Aus: Hier zeigt macOS den normalen Hintergrund."
+
 msgid "Off: Windows shows its normal wallpaper here."
 msgstr "Aus: Hier zeigt Windows den normalen Hintergrund."
 
@@ -285,6 +291,9 @@ msgstr "Einstellungen"
 msgid "General"
 msgstr "Allgemein"
 
+msgid "Start at login"
+msgstr "Beim Anmelden starten"
+
 msgid "Start with Windows"
 msgstr "Mit Windows starten"
 
@@ -294,8 +303,14 @@ msgstr "Kumo startet nach der Anmeldung unauffällig im Hintergrund."
 msgid "Language"
 msgstr "Sprache"
 
+msgid "For this window and the menu bar item."
+msgstr "Für dieses Fenster und das Menüleisten-Symbol."
+
 msgid "For this window and the menu in the notification area."
 msgstr "Gilt für dieses Fenster und das Menü im Infobereich."
+
+msgid "Same as macOS"
+msgstr "Wie macOS"
 
 msgid "Same as Windows"
 msgstr "Wie Windows"
@@ -360,6 +375,9 @@ msgstr "Zurücksetzen …"
 msgid "Uninstall Kumo"
 msgstr "Kumo deinstallieren"
 
+msgid "Shows Kumo in the Finder. Move it to the Trash to remove it."
+msgstr "Zeigt Kumo im Finder. Lege es in den Papierkorb, um es zu entfernen."
+
 msgid "Opens the Windows settings. Your wallpapers and settings go with the app."
 msgstr "Öffnet die Windows-Einstellungen. Deine Hintergründe und Einstellungen werden mit entfernt."
 
@@ -374,6 +392,9 @@ msgstr "Über Kumo"
 
 msgid "Version {}"
 msgstr "Version {}"
+
+msgid "Lightweight live wallpapers for the Mac. 雲 (kumo) is Japanese for “cloud”."
+msgstr "Sparsame Live-Hintergründe für den Mac. 雲 (kumo) ist japanisch für „Wolke“."
 
 msgid "Lightweight live wallpapers for Windows. 雲 (kumo) is Japanese for “cloud”."
 msgstr "Leichtgewichtige Live-Hintergründe für Windows. 雲 (kumo) ist Japanisch für „Wolke“."

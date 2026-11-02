@@ -2,6 +2,7 @@
 license. Their licenses ask for this text to ship with the program, and the panel opens it.
 Run it after changing dependencies:  python tools/third_party.py
 With --check it only tells whether the file is current (the automated build does this).
+With --mac it works on kumo-mac, the macOS version, instead.
 """
 import json
 import pathlib
@@ -9,9 +10,10 @@ import re
 import subprocess
 import sys
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+MAC = "--mac" in sys.argv
+ROOT = pathlib.Path(__file__).resolve().parent.parent / ("kumo-mac" if MAC else "")
 OUT = ROOT / "assets" / "third-party-notices.txt"
-TARGET = "x86_64-pc-windows-msvc"
+TARGET = "aarch64-apple-darwin" if MAC else "x86_64-pc-windows-msvc"
 
 # Where a crate offers a choice, the first of these it offers is the one Kumo uses.
 PREFERRED = ["MIT", "BSD-3-Clause", "BSD-2-Clause", "Zlib", "Apache-2.0", "BSL-1.0", "Unlicense", "CC0-1.0", "0BSD"]
@@ -35,6 +37,11 @@ HEADER = """Third-party notices for Kumo
 
 Kumo is free software under the GNU General Public License v3. It is built with the libraries
 listed here. Thank you to everyone who wrote them. Their licenses come after the list.
+
+"""
+
+ICONS = """The icons of the control panel come from Fluent UI System Icons,
+Copyright (c) 2020 Microsoft Corporation, under the MIT license printed below.
 
 """
 
@@ -121,7 +128,7 @@ def build():
                 sys.exit(f'no license text for {c["name"]} ({license})')
             groups.setdefault(text, []).append(f'{c["name"]} {c["version"]}')
 
-    out = [HEADER, f"LIBRARIES ({len(all_crates)})\n\n", "\n".join(list_lines), "\n\n"]
+    out = [HEADER, ICONS if MAC else "", f"LIBRARIES ({len(all_crates)})\n\n", "\n".join(list_lines), "\n\n"]
     out.append("Slint is used under the GNU GPL v3, the same license as Kumo. See About Kumo, License.\n\n")
     out.append("LICENSES\n")
     for text, names in sorted(groups.items(), key=lambda g: g[1][0]):

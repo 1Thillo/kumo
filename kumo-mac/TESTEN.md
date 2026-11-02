@@ -1,7 +1,7 @@
 # Kumo auf dem Mac testen
 
-Danke fürs Testen! Das ist eine frühe Testversion. Sie zeigt nur die eingebaute Szene und hat noch
-kein Bedienfeld. Sie läuft auf Macs mit Apple-Chip und Intel, ab macOS 11.
+Danke fürs Testen! Das ist eine frühe Testversion mit Bedienfeld, eigenen Videos und Bildern. Sie
+läuft auf Macs mit Apple-Chip und Intel, ab macOS 11.
 
 ## Installieren
 
@@ -11,7 +11,8 @@ kein Bedienfeld. Sie läuft auf Macs mit Apple-Chip und Intel, ab macOS 11.
 3. **Systemeinstellungen > Datenschutz & Sicherheit** öffnen, ganz nach unten scrollen und bei Kumo
    auf **Trotzdem öffnen** klicken. Danach mit deinem Passwort bestätigen.
 
-Kumo hat kein Fenster und kein Dock-Symbol. Du erkennst es am Sakura-Symbol oben in der Menüleiste.
+Beim ersten Start öffnet sich das Kumo-Fenster und fragt nach dem Start beim Anmelden. Später
+erreichst du Kumo über das Sakura-Symbol oben in der Menüleiste.
 
 ## Bitte prüfen
 
@@ -21,21 +22,35 @@ Schreib bei jedem Punkt kurz, ob es klappt:
    normal anklicken?
 2. **Bild:** Ist das Bild scharf genug? Sehen die Farben normal aus, oder gibt es Streifen oder
    Flackern?
-3. **Menüleiste:** Klick aufs Sakura-Symbol. Funktionieren **Pausieren**, **Fortsetzen** und
-   **Kumo beenden**?
-4. **Schreibtische:** Bleibt der Hintergrund beim Wechseln der Schreibtische sichtbar, auch in
+3. **Menüleiste:** Klick aufs Sakura-Symbol. Funktionieren **Kumo öffnen**, **Pausieren**,
+   **Fortsetzen** und **Kumo beenden**?
+4. **Eigenes Video:** Zieh ein MP4- oder MOV-Video ins Kumo-Fenster. Erscheint ein Vorschaubild?
+   Läuft das Video als Hintergrund, wenn du es anwendest, und beginnt es am Ende nahtlos neu?
+5. **Eigenes Bild:** Dasselbe mit einem Foto.
+6. **Anpassen:** Klick bei einem Video oder Bild auf **Anpassen**. Ändern sich Füllung und
+   Wiedergabetempo sofort? Klick bei der Pagode auf **Anpassen** und ändere die Tageszeit.
+7. **Einstellungen:** Wechsle Sprache und Farbmodus. Sind alle Symbole sichtbar, keine leeren
+   Kästchen? Stimmt der Text überall, und taucht irgendwo noch „Windows“ auf?
+8. **Autostart:** Schalte **Beim Anmelden starten** ein, melde dich ab und wieder an. Ist Kumo
+   wieder da?
+9. **Schreibtische:** Bleibt der Hintergrund beim Wechseln der Schreibtische sichtbar, auch in
    Mission Control?
-5. **Vollbild:** Öffne eine App im Vollbild. Bleibt danach alles flüssig?
-6. **Zweiter Bildschirm**, falls vorhanden: Läuft Kumo auf beiden? Und wenn du ihn abziehst?
-7. **Ruhezustand:** Läuft Kumo nach dem Zuklappen und Aufklappen normal weiter?
-8. **Akku:** Wird der Mac spürbar warm oder laut?
+10. **Vollbild:** Öffne eine App im Vollbild. Bleibt danach alles flüssig?
+11. **Zweiter Bildschirm**, falls vorhanden: Läuft Kumo auf beiden? Kannst du unter **Bildschirme**
+    jedem Bildschirm einen eigenen Hintergrund geben? Und wenn du einen abziehst?
+12. **Ruhezustand:** Läuft Kumo nach dem Zuklappen und Aufklappen normal weiter?
+13. **Akku:** Wird der Mac spürbar warm oder laut?
 
 ## Speicher messen
 
-Öffne die **Aktivitätsanzeige** und suche nach `kumo`. Notiere bitte:
+Öffne die **Aktivitätsanzeige** und suche nach `kumo`. Notiere bitte **Speicher** und **% CPU**:
 
-- die Werte bei **Speicher** und **% CPU**, während der Hintergrund sichtbar ist,
-- dieselben Werte, während eine App im Vollbild läuft.
+- mit der Pagoden-Szene, während der Hintergrund sichtbar ist,
+- mit der Pagoden-Szene, während eine App im Vollbild läuft,
+- mit deinem Video.
+
+Zwei Einträge namens `kumo` sind normal, solange das Kumo-Fenster offen ist. Gemeint ist der
+Eintrag, der nach dem Schließen des Fensters bleibt.
 
 ## Zurückschicken
 
@@ -47,5 +62,7 @@ Schreib bei jedem Punkt kurz, ob es klappt:
 
 ## Entfernen
 
-Kumo über das Menüleisten-Symbol beenden und `Kumo.app` in den Papierkorb legen. Den Ordner
-`~/Library/Application Support/Kumo` kannst du auch löschen.
+1. Im Kumo-Fenster **Beim Anmelden starten** ausschalten.
+2. Kumo über das Menüleisten-Symbol beenden und `Kumo.app` in den Papierkorb legen.
+3. Den Ordner `~/Library/Application Support/Kumo` löschen. Darin liegen auch die Kopien deiner
+   Videos und Bilder.

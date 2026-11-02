@@ -14,6 +14,8 @@ MAC = "--mac" in sys.argv
 ROOT = pathlib.Path(__file__).resolve().parent.parent / ("kumo-mac" if MAC else "")
 OUT = ROOT / "assets" / "third-party-notices.txt"
 TARGET = "aarch64-apple-darwin" if MAC else "x86_64-pc-windows-msvc"
+# proc macros run at build time only; left in, a list made on Windows would name Windows crates
+EDGES = "normal,no-proc-macro" if MAC else "normal"
 
 # Where a crate offers a choice, the first of these it offers is the one Kumo uses.
 PREFERRED = ["MIT", "BSD-3-Clause", "BSD-2-Clause", "Zlib", "Apache-2.0", "BSL-1.0", "Unlicense", "CC0-1.0", "0BSD"]
@@ -55,7 +57,7 @@ def crates():
     meta = json.loads(cargo("metadata", "--format-version", "1", "--filter-platform", TARGET))
     known = {(p["name"], p["version"]): p for p in meta["packages"]}
     used = set()
-    for line in cargo("tree", "-e", "normal", "--prefix", "none", "--format", "{p}", "--target", TARGET).splitlines():
+    for line in cargo("tree", "-e", EDGES, "--prefix", "none", "--format", "{p}", "--target", TARGET).splitlines():
         m = re.match(r"(\S+) v(\S+)", line)
         if m and m[1] != "kumo":
             used.add((m[1], m[2]))

@@ -22,11 +22,7 @@ jobs:
         with:
           workspaces: kumo-mac
       - name: Third-party notices are current
-        continue-on-error: true
-        run: |
-          python3 ../tools/third_party.py --mac
-          git diff --stat -- assets/third-party-notices.txt
-          git diff -- assets/third-party-notices.txt | head -n 40
+        run: python3 ../tools/third_party.py --mac --check
       - name: Test
         run: cargo test
       - name: Build for Apple silicon and Intel

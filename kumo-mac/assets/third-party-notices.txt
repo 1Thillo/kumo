@@ -6,7 +6,7 @@ listed here. Thank you to everyone who wrote them. Their licenses come after the
 The icons of the control panel come from Fluent UI System Icons,
 Copyright (c) 2020 Microsoft Corporation, under the MIT license printed below.
 
-LIBRARIES (294)
+LIBRARIES (225)
 
 accesskit 0.24.1  |  MIT  |  The AccessKit contributors  |  https://github.com/AccessKit/accesskit
 accesskit_consumer 0.38.0  |  MIT  |  The AccessKit contributors  |  https://github.com/AccessKit/accesskit
@@ -14,8 +14,6 @@ accesskit_macos 0.26.3  |  MIT  |  The AccessKit contributors  |  https://github
 accesskit_winit 0.33.2  |  Apache-2.0  |  The AccessKit contributors  |  https://github.com/AccessKit/accesskit
 adler2 2.0.1  |  MIT  |  Jonas Schievink, oyvindln  |  https://github.com/oyvindln/adler2
 allocator-api2 0.2.21  |  MIT  |  Zakarum  |  https://github.com/zakarumych/allocator-api2
-annotate-snippets 0.12.17  |  MIT  |    |  https://github.com/rust-lang/annotate-snippets-rs
-anstyle 1.0.14  |  MIT  |    |  https://github.com/rust-cli/anstyle.git
 arboard 3.7.0  |  MIT  |    |  https://github.com/1Password/arboard
 arrayref 0.3.9  |  BSD-2-Clause  |  David Roundy  |  https://github.com/droundy/arrayref
 arrayvec 0.7.8  |  MIT  |  bluss  |  https://github.com/bluss/arrayvec
@@ -26,9 +24,7 @@ bitflags 1.3.2  |  MIT  |  The Rust Project Developers  |  https://github.com/bi
 bitflags 2.13.2  |  MIT  |  The Rust Project Developers  |  https://github.com/bitflags/bitflags
 block2 0.5.1  |  MIT  |  Steven Sheldon, Mads Marquart  |  https://github.com/madsmtm/objc2
 block2 0.6.2  |  MIT  |  Mads Marquart  |  https://github.com/madsmtm/objc2
-by_address 1.2.1  |  MIT  |  Matt Brubeck  |  https://github.com/mbrubeck/by_address
 bytemuck 1.25.2  |  MIT  |  Lokathor  |  https://github.com/Lokathor/bytemuck
-bytemuck_derive 1.12.1  |  MIT  |  Lokathor  |  https://github.com/Lokathor/bytemuck
 byteorder-lite 0.1.0  |  MIT  |    |  https://github.com/image-rs/byteorder-lite
 cfg-if 1.0.5  |  MIT  |  Alex Crichton  |  https://github.com/rust-lang/cfg-if
 chrono 0.4.45  |  MIT  |    |  https://github.com/chronotope/chrono
@@ -36,29 +32,20 @@ clru 0.6.3  |  MIT  |  marmeladema  |  https://github.com/marmeladema/clru-rs
 codespan-reporting 0.13.1  |  Apache-2.0  |  Brendan Zabarauskas  |  https://github.com/brendanzab/codespan
 color_quant 1.1.0  |  MIT  |  nwin  |  https://github.com/image-rs/color_quant.git
 const-field-offset 0.2.1  |  MIT  |  Slint Developers  |  https://github.com/slint-ui/slint
-const-field-offset-macro 0.2.1  |  MIT  |  Slint Developers  |  https://github.com/slint-ui/slint
-convert_case 0.10.0  |  MIT  |  rutrum  |  https://github.com/rutrum/convert-case
 core-foundation 0.9.4  |  MIT  |  The Servo Project Developers  |  https://github.com/servo/core-foundation-rs
 core-foundation-sys 0.8.7  |  MIT  |  The Servo Project Developers  |  https://github.com/servo/core-foundation-rs
 core-graphics 0.23.2  |  MIT  |  The Servo Project Developers  |  https://github.com/servo/core-foundation-rs
 core-graphics-types 0.1.3  |  MIT  |  The Servo Project Developers  |  https://github.com/servo/core-foundation-rs
-countme 3.0.1  |  MIT  |  Aleksey Kladov  |  https://github.com/matklad/countme
 crc32fast 1.5.4  |  MIT  |  Sam Rijs, Alex Crichton  |  https://github.com/srijs/rust-crc32fast
 critical-section 1.2.0  |  MIT  |    |  https://github.com/rust-embedded/critical-section
 crossbeam-channel 0.5.17  |  MIT  |    |  https://github.com/crossbeam-rs/crossbeam
-crossbeam-deque 0.8.8  |  MIT  |    |  https://github.com/crossbeam-rs/crossbeam
-crossbeam-epoch 0.9.21  |  MIT  |    |  https://github.com/crossbeam-rs/crossbeam
 crossbeam-utils 0.8.23  |  MIT  |    |  https://github.com/crossbeam-rs/crossbeam
 cursor-icon 1.2.0  |  MIT  |  Kirill Chibisov  |  https://github.com/rust-windowing/cursor-icon
 data-url 0.3.2  |  MIT  |  Simon Sapin  |  https://github.com/servo/rust-url
 derive_more 2.1.1  |  MIT  |  Jelte Fennema  |  https://github.com/JelteF/derive_more
-derive_more-impl 2.1.1  |  MIT  |  Jelte Fennema  |  https://github.com/JelteF/derive_more
 dispatch 0.2.0  |  MIT  |  Steven Sheldon  |  http://github.com/SSheldon/rust-dispatch
 dispatch2 0.3.1  |  MIT  |  Mads Marquart, Mary  |  https://github.com/madsmtm/objc2
-displaydoc 0.2.7  |  MIT  |  Jane Lusby  |  https://github.com/yaahc/displaydoc
-document-features 0.2.12  |  MIT  |  Slint Developers  |  https://github.com/slint-ui/document-features
 dpi 0.1.2  |  Apache-2.0 AND MIT  |    |  https://github.com/rust-windowing/winit
-either 1.19.0  |  MIT  |    |  https://github.com/rayon-rs/either
 equivalent 1.0.3  |  MIT  |    |  https://github.com/indexmap-rs/equivalent
 euclid 0.22.14  |  MIT  |  The Servo Project Developers  |  https://github.com/servo/euclid
 fdeflate 0.3.7  |  MIT  |  The image-rs Developers  |  https://github.com/image-rs/fdeflate
@@ -71,24 +58,19 @@ font-types 0.12.7  |  MIT  |    |  https://github.com/googlefonts/fontations
 fontdb 0.24.0  |  MIT  |  Yevhenii Reizner  |  https://github.com/RazrFalcon/fontdb
 fontique 0.11.1  |  MIT  |    |  https://github.com/linebender/parley
 foreign-types 0.5.0  |  MIT  |  Steven Fackler  |  https://github.com/sfackler/foreign-types
-foreign-types-macros 0.2.4  |  MIT  |  Steven Fackler  |  https://github.com/sfackler/foreign-types
 foreign-types-shared 0.3.1  |  MIT  |  Steven Fackler  |  https://github.com/sfackler/foreign-types
 form_urlencoded 1.2.2  |  MIT  |  The rust-url developers  |  https://github.com/servo/rust-url
 gif 0.14.2  |  MIT  |  The image-rs Developers  |  https://github.com/image-rs/image-gif
 glam 0.29.3  |  MIT  |  Cameron Hart  |  https://github.com/bitshifter/glam-rs
 half 2.7.1  |  MIT  |  Kathryn Long  |  https://github.com/VoidStarKat/half-rs
 harfrust 0.12.0  |  MIT  |    |  https://github.com/harfbuzz/harfrust
-hashbrown 0.14.5  |  MIT  |  Amanieu d'Antras  |  https://github.com/rust-lang/hashbrown
 hashbrown 0.16.1  |  MIT  |  Amanieu d'Antras  |  https://github.com/rust-lang/hashbrown
 hashbrown 0.17.1  |  MIT  |    |  https://github.com/rust-lang/hashbrown
-heck 0.5.0  |  MIT  |    |  https://github.com/withoutboats/heck
 htmlparser 0.2.1  |  MIT  |  Jeremie Drouet  |  https://github.com/jdrouet/htmlparser.git
 i-slint-backend-selector 1.18.1  |  GPL-3.0-only  |  Slint Developers  |  https://github.com/slint-ui/slint
 i-slint-backend-winit 1.18.1  |  GPL-3.0-only  |  Slint Developers  |  https://github.com/slint-ui/slint
 i-slint-common 1.18.1  |  GPL-3.0-only  |  Slint Developers  |  https://github.com/slint-ui/slint
-i-slint-compiler 1.18.1  |  GPL-3.0-only  |  Slint Developers  |  https://github.com/slint-ui/slint
 i-slint-core 1.18.1  |  GPL-3.0-only  |  Slint Developers  |  https://github.com/slint-ui/slint
-i-slint-core-macros 1.18.1  |  GPL-3.0-only  |  Slint Developers  |  https://github.com/slint-ui/slint
 i-slint-renderer-software 1.18.1  |  GPL-3.0-only  |  Slint Developers  |  https://github.com/slint-ui/slint
 iana-time-zone 0.1.65  |  MIT  |  Andrew Straw, René Kijewski, Ryan Lopopolo  |  https://github.com/strawlab/iana-time-zone
 icu_collections 2.4.0  |  Unicode-3.0  |  The ICU4X Project Developers  |  https://github.com/unicode-org/icu4x
@@ -111,17 +93,14 @@ image-webp 0.2.4  |  MIT  |    |  https://github.com/image-rs/image-webp
 imagesize 0.15.0  |  MIT  |  Maid Dog  |  https://github.com/Roughsketch/imagesize
 imgref 1.12.3  |  Apache-2.0  |  Kornel Lesiński  |  https://github.com/kornelski/imgref
 indexmap 2.14.2  |  MIT  |    |  https://github.com/indexmap-rs/indexmap
-itertools 0.15.0  |  MIT  |  bluss  |  https://github.com/rust-itertools/itertools
 itoa 1.0.18  |  MIT  |  David Tolnay  |  https://github.com/dtolnay/itoa
 keyboard-types 0.7.0  |  MIT  |  Pyfisch  |  https://github.com/pyfisch/keyboard-types
 kurbo 0.13.1  |  MIT  |    |  https://github.com/linebender/kurbo
-lazy_static 1.5.1  |  MIT  |  Marvin Löbel  |  https://github.com/rust-lang-nursery/lazy-static.rs
 libc 0.2.191  |  MIT  |    |  https://github.com/rust-lang/libc
 libloading 0.8.9  |  ISC  |  Simonas Kazlauskas  |  https://github.com/nagisa/rust_libloading/
 libm 0.2.16  |  MIT  |  Alex Crichton, Amanieu d'Antras, Jorge Aparicio, Trevor Gross  |  https://github.com/rust-lang/compiler-builtins
 linebender_resource_handle 0.1.1  |  MIT  |    |  https://github.com/linebender/raw_resource_handle
 litemap 0.8.3  |  Unicode-3.0  |  The ICU4X Project Developers  |  https://github.com/unicode-org/icu4x
-litrs 1.0.1  |  MIT  |  Lukas Kalbertodt  |  https://github.com/LukasKalbertodt/litrs
 lock_api 0.4.14  |  MIT  |  Amanieu d'Antras  |  https://github.com/Amanieu/parking_lot
 log 0.4.35  |  MIT  |  The Rust Project Developers  |  https://github.com/rust-lang/log
 lyon_algorithms 1.0.22  |  MIT  |  Nicolas Silva  |  https://github.com/nical/lyon
@@ -137,10 +116,7 @@ moxcms 0.8.1  |  BSD-3-Clause  |  Radzivon Bartoshyk  |  https://github.com/awxk
 muda 0.19.3  |  MIT  |    |  https://github.com/tauri-apps/muda
 naga 30.0.1  |  MIT  |  gfx-rs developers  |  https://github.com/gfx-rs/wgpu
 naga-types 30.0.1  |  MIT  |  gfx-rs developers  |  https://github.com/gfx-rs/wgpu
-natord 1.0.9  |  MIT  |  Kang Seonghoon  |  https://github.com/lifthrasiir/rust-natord
 num-traits 0.2.19  |  MIT  |  The Rust Project Developers  |  https://github.com/rust-num/num-traits
-num_enum 0.7.6  |  MIT  |  Daniel Wagner-Hall, Daniel Henry-Mantilla, Vincent Esche  |  https://github.com/illicitonion/num_enum
-num_enum_derive 0.7.6  |  MIT  |  Daniel Wagner-Hall, Daniel Henry-Mantilla, Vincent Esche  |  https://github.com/illicitonion/num_enum
 objc-sys 0.3.5  |  MIT  |  Mads Marquart  |  https://github.com/madsmtm/objc2
 objc2 0.5.3  |  MIT  |  Steven Sheldon, Mads Marquart  |  https://github.com/madsmtm/objc2
 objc2 0.6.5  |  MIT  |  Mads Marquart  |  https://github.com/madsmtm/objc2
@@ -174,39 +150,28 @@ parley_data 0.11.1  |  MIT  |    |  https://github.com/linebender/parley
 percent-encoding 2.3.2  |  MIT  |  The rust-url developers  |  https://github.com/servo/rust-url/
 pico-args 0.5.0  |  MIT  |  Yevhenii Reizner  |  https://github.com/RazrFalcon/pico-args
 pin-project 1.1.13  |  MIT  |    |  https://github.com/taiki-e/pin-project
-pin-project-internal 1.1.13  |  MIT  |    |  https://github.com/taiki-e/pin-project
 pin-project-lite 0.2.17  |  MIT  |    |  https://github.com/taiki-e/pin-project-lite
-pin-utils 0.1.1  |  MIT  |  Josef Brandl  |  https://github.com/rust-lang/pin-utils
 pin-weak 1.1.0  |  MIT  |  Olivier Goffart  |  https://github.com/sixtyfpsui/pin-weak
 png 0.18.1  |  MIT  |  The image-rs Developers  |  https://github.com/image-rs/image-png
 pollster 0.4.0  |  MIT  |  Joshua Barretto  |  https://github.com/zesterer/pollster
 polycool 0.4.0  |  MIT  |    |  https://github.com/linebender/kurbo
 portable-atomic 1.15.0  |  MIT  |    |  https://github.com/taiki-e/portable-atomic
 potential_utf 0.1.6  |  Unicode-3.0  |  The ICU4X Project Developers  |  https://github.com/unicode-org/icu4x
-proc-macro-crate 3.5.0  |  MIT  |  Bastian Köcher  |  https://github.com/bkchr/proc-macro-crate
-proc-macro2 1.0.107  |  MIT  |  David Tolnay, Alex Crichton  |  https://github.com/dtolnay/proc-macro2
 profiling 1.0.18  |  MIT  |  Philip Degarmo  |  https://github.com/aclysma/profiling
 pulldown-cmark 0.13.6  |  MIT  |  Raph Levien, Marcus Klaas de Vries  |  https://github.com/raphlinus/pulldown-cmark
 pxfm 0.1.30  |  BSD-3-Clause  |  Radzivon Bartoshyk  |  https://github.com/awxkee/pxfm
 quick-error 2.0.1  |  MIT  |  Paul Colomiets, Colin Kiegel  |  http://github.com/tailhook/quick-error
-quote 1.0.47  |  MIT  |  David Tolnay  |  https://github.com/dtolnay/quote
 raw-window-handle 0.6.2  |  MIT  |  Osspial  |  https://github.com/rust-windowing/raw-window-handle
 raw-window-metal 1.1.0  |  MIT  |    |  https://github.com/rust-windowing/raw-window-metal
-rayon 1.12.0  |  MIT  |    |  https://github.com/rayon-rs/rayon
-rayon-core 1.13.0  |  MIT  |    |  https://github.com/rayon-rs/rayon
 read-fonts 0.41.0  |  MIT  |    |  https://github.com/googlefonts/fontations
 resvg 0.48.1  |  MIT  |    |  https://github.com/linebender/resvg
 rgb 0.8.53  |  MIT  |  Kornel Lesiński, James Forster  |  https://github.com/kornelski/rust-rgb
-rowan 0.17.0  |  MIT  |  Aleksey Kladov  |  https://github.com/rust-analyzer/rowan
 roxmltree 0.21.2  |  MIT  |  Yevhenii Reizner  |  https://github.com/RazrFalcon/roxmltree
-rspolib 0.1.2  |  MIT  |    |  https://github.com/mondeja/rspolib
 rustc-hash 1.1.0  |  MIT  |  The Rust Project Developers  |  https://github.com/rust-lang-nursery/rustc-hash
-rustversion 1.0.23  |  MIT  |  David Tolnay  |  https://github.com/dtolnay/rustversion
 scoped-tls-hkt 0.1.5  |  MIT  |  Diggory Blake  |  https://github.com/Diggsey/scoped-tls-hkt
 scopeguard 1.2.0  |  MIT  |  bluss  |  https://github.com/bluss/scopeguard
 serde 1.0.229  |  MIT  |  Erick Tryzelaar, David Tolnay  |  https://github.com/serde-rs/serde
 serde_core 1.0.229  |  MIT  |  Erick Tryzelaar, David Tolnay  |  https://github.com/serde-rs/serde
-serde_derive 1.0.229  |  MIT  |  Erick Tryzelaar, David Tolnay  |  https://github.com/serde-rs/serde
 serde_json 1.0.154  |  MIT  |    |  https://github.com/serde-rs/json
 simd-adler32 0.3.10  |  MIT  |  Marvin Countryman  |  https://github.com/mcountryman/simd-adler32
 simplecss 0.2.2  |  MIT  |    |  https://github.com/linebender/simplecss
@@ -214,41 +179,25 @@ siphasher 1.0.4  |  MIT  |  Frank Denis  |  https://github.com/jedisct1/rust-sip
 skrifa 0.44.0  |  MIT  |    |  https://github.com/googlefonts/fontations
 slab 0.4.12  |  MIT  |  Carl Lerche  |  https://github.com/tokio-rs/slab
 slint 1.18.1  |  GPL-3.0-only  |  Slint Developers  |  https://github.com/slint-ui/slint
-slint-macros 1.18.1  |  GPL-3.0-only  |  Slint Developers  |  https://github.com/slint-ui/slint
 slotmap 1.1.1  |  Zlib  |  Orson Peters  |  https://github.com/orlp/slotmap
 smallvec 1.16.4  |  MIT  |  The Servo Project Developers  |  https://github.com/servo/rust-smallvec
 smol_str 0.2.2  |  MIT  |  Aleksey Kladov  |  https://github.com/rust-analyzer/smol_str
-smol_str 0.3.7  |  MIT  |  Aleksey Kladov, Lukas Wirth  |  https://github.com/rust-lang/rust-analyzer/tree/master/lib/smol_str
-snafu 0.8.9  |  MIT  |  Jake Goulding  |  https://github.com/shepmaster/snafu
-snafu-derive 0.8.9  |  MIT  |  Jake Goulding  |  https://github.com/shepmaster/snafu
 softbuffer 0.4.8  |  MIT  |    |  https://github.com/rust-windowing/softbuffer
-spin_on 0.1.1  |  MIT  |  paulkernfeld
 stable_deref_trait 1.2.1  |  MIT  |  Robert Grosse  |  https://github.com/storyyeller/stable_deref_trait
 static_assertions 1.1.0  |  MIT  |  Nikolai Vazquez  |  https://github.com/nvzqz/static-assertions-rs
 strict-num 0.1.1  |  MIT  |  Yevhenii Reizner  |  https://github.com/RazrFalcon/strict-num
 strum 0.28.0  |  MIT  |  Peter Glotfelty  |  https://github.com/Peternator7/strum
-strum_macros 0.28.0  |  MIT  |  Peter Glotfelty  |  https://github.com/Peternator7/strum
 svgtypes 0.16.1  |  MIT  |    |  https://github.com/linebender/svgtypes
 swash 0.2.10  |  MIT  |  Chad Brokaw  |  https://github.com/dfrg/swash
-syn 2.0.119  |  MIT  |  David Tolnay  |  https://github.com/dtolnay/syn
-syn 3.0.9  |  MIT  |  David Tolnay  |  https://github.com/dtolnay/syn
-synstructure 0.14.0  |  MIT  |  Nika Layzell  |  https://github.com/mystor/synstructure
 sys-locale 0.3.2  |  MIT  |  1Password  |  https://github.com/1Password/sys-locale
 taffy 0.10.1  |  MIT  |  Alice Cecile, Johnathan Kelley, Nico Burns  |  https://github.com/DioxusLabs/taffy
-text-size 1.1.1  |  MIT  |  Aleksey Kladov, Christopher Durham (CAD97)  |  https://github.com/rust-analyzer/text-size
 thiserror 2.0.21  |  MIT  |  David Tolnay  |  https://github.com/dtolnay/thiserror
-thiserror-impl 2.0.21  |  MIT  |  David Tolnay  |  https://github.com/dtolnay/thiserror
 tiny-skia 0.12.0  |  BSD-3-Clause  |  Yevhenii Reizner  |  https://github.com/linebender/tiny-skia
 tiny-skia-path 0.12.0  |  BSD-3-Clause  |  Yevhenii Reizner  |  https://github.com/linebender/tiny-skia/tree/master/path
 tinystr 0.8.5  |  Unicode-3.0  |  The ICU4X Project Developers  |  https://github.com/unicode-org/icu4x
 tinyvec 1.13.3  |  MIT  |  Lokathor  |  https://github.com/Lokathor/tinyvec
-toml_datetime 1.1.2+spec-1.1.0  |  MIT  |    |  https://github.com/toml-rs/toml
-toml_edit 0.25.17+spec-1.1.0  |  MIT  |    |  https://github.com/toml-rs/toml
-toml_parser 1.1.5+spec-1.1.0  |  MIT  |    |  https://github.com/toml-rs/toml
-toml_writer 1.1.3+spec-1.1.0  |  MIT  |    |  https://github.com/toml-rs/toml
 tracing 0.1.44  |  MIT  |  Eliza Weisman, Tokio Contributors  |  https://github.com/tokio-rs/tracing
 tracing-core 0.1.36  |  MIT  |  Tokio Contributors  |  https://github.com/tokio-rs/tracing
-typed-index-collections 3.5.0  |  MIT  |  Andrey Zheleznov  |  https://github.com/zheland/typed-index-collections
 unicase 2.10.0  |  MIT  |  Sean McArthur  |  https://github.com/seanmonstar/unicase
 unicode-bidi 0.3.18  |  MIT  |  The Servo Project Developers  |  https://github.com/servo/unicode-bidi
 unicode-ident 1.0.27  |  MIT AND Unicode-3.0  |  David Tolnay  |  https://github.com/dtolnay/unicode-ident
@@ -257,14 +206,12 @@ unicode-script 0.5.9  |  MIT  |  Manish Goregaokar  |  https://github.com/unicod
 unicode-segmentation 1.13.3  |  MIT  |  kwantam, Manish Goregaokar  |  https://github.com/unicode-rs/unicode-segmentation
 unicode-vo 0.1.0  |  MIT  |  Evgeniy Reizner  |  https://github.com/RazrFalcon/unicode-vo
 unicode-width 0.2.3  |  MIT  |  kwantam, Manish Goregaokar  |  https://github.com/unicode-rs/unicode-width
-unicode-xid 0.2.6  |  MIT  |  erick.tryzelaar, kwantam, Manish Goregaokar  |  https://github.com/unicode-rs/unicode-xid
 url 2.5.8  |  MIT  |  The rust-url developers  |  https://github.com/servo/rust-url
 usvg 0.48.1  |  MIT  |    |  https://github.com/linebender/resvg
 utf8_iter 1.1.0  |  MIT  |  Henri Sivonen  |  https://github.com/hsivonen/utf8_iter
 utf_types 1.0.0  |  MIT  |  Henri Sivonen  |  https://github.com/hsivonen/utf_types
 uuid 1.29.0  |  MIT  |  Ashley Mannix<ashleymannix@live.com.au>, Dylan DPC<dylan.dpc@gmail.com>, Hunar Roop Kahlon<hunar.roop@gmail.com>  |  https://github.com/uuid-rs/uuid
 vtable 0.5.0  |  MIT  |  Slint Developers  |  https://github.com/slint-ui/slint
-vtable-macro 0.5.0  |  MIT  |  Slint Developers  |  https://github.com/slint-ui/slint
 webbrowser 1.2.6  |  MIT  |  Amod Malviya @amodm  |  https://github.com/amodm/webbrowser-rs
 weezl 0.1.12  |  MIT  |  The image-rs Developers  |  https://github.com/image-rs/weezl
 wgpu 30.0.1  |  MIT  |  gfx-rs developers  |  https://github.com/gfx-rs/wgpu
@@ -273,32 +220,16 @@ wgpu-core-deps-apple 30.0.1  |  MIT  |  gfx-rs developers  |  https://github.com
 wgpu-hal 30.0.1  |  MIT  |  gfx-rs developers  |  https://github.com/gfx-rs/wgpu
 wgpu-naga-bridge 30.0.1  |  MIT  |  gfx-rs developers  |  https://github.com/gfx-rs/wgpu
 wgpu-types 30.0.1  |  MIT  |  gfx-rs developers  |  https://github.com/gfx-rs/wgpu
-windows 0.62.2  |  MIT  |    |  https://github.com/microsoft/windows-rs
-windows-collections 0.3.2  |  MIT  |    |  https://github.com/microsoft/windows-rs
-windows-core 0.62.2  |  MIT  |    |  https://github.com/microsoft/windows-rs
-windows-future 0.3.2  |  MIT  |    |  https://github.com/microsoft/windows-rs
-windows-implement 0.60.2  |  MIT  |    |  https://github.com/microsoft/windows-rs
-windows-interface 0.59.3  |  MIT  |    |  https://github.com/microsoft/windows-rs
-windows-link 0.2.1  |  MIT  |    |  https://github.com/microsoft/windows-rs
-windows-numerics 0.3.1  |  MIT  |    |  https://github.com/microsoft/windows-rs
-windows-result 0.4.1  |  MIT  |    |  https://github.com/microsoft/windows-rs
-windows-strings 0.5.1  |  MIT  |    |  https://github.com/microsoft/windows-rs
-windows-threading 0.2.1  |  MIT  |    |  https://github.com/microsoft/windows-rs
 winit 0.30.13  |  Apache-2.0  |  The winit contributors, Pierre Krieger  |  https://github.com/rust-windowing/winit
-winnow 1.0.4  |  MIT  |    |  https://github.com/winnow-rs/winnow
 writeable 0.6.4  |  Unicode-3.0  |  The ICU4X Project Developers  |  https://github.com/unicode-org/icu4x
 xmlwriter 0.1.0  |  MIT  |  Evgeniy Reizner  |  https://github.com/RazrFalcon/xmlwriter
 yazi 0.2.2  |  MIT  |  Chad Brokaw  |  https://github.com/dfrg/yazi
 yoke 0.8.4  |  Unicode-3.0  |  Manish Goregaokar  |  https://github.com/unicode-org/icu4x
-yoke-derive 0.8.4  |  Unicode-3.0  |  Manish Goregaokar  |  https://github.com/unicode-org/icu4x
 zeno 0.3.3  |  MIT  |  Chad Brokaw  |  https://github.com/dfrg/zeno
 zerocopy 0.8.63  |  MIT  |    |  https://github.com/google/zerocopy
-zerocopy-derive 0.8.63  |  MIT  |    |  https://github.com/google/zerocopy
 zerofrom 0.1.8  |  Unicode-3.0  |  The ICU4X Project Developers  |  https://github.com/unicode-org/icu4x
-zerofrom-derive 0.1.8  |  Unicode-3.0  |  Manish Goregaokar  |  https://github.com/unicode-org/icu4x
 zerotrie 0.2.5  |  Unicode-3.0  |  The ICU4X Project Developers  |  https://github.com/unicode-org/icu4x
 zerovec 0.11.9  |  Unicode-3.0  |  The ICU4X Project Developers  |  https://github.com/unicode-org/icu4x
-zerovec-derive 0.11.7  |  Unicode-3.0  |  Manish Goregaokar  |  https://github.com/unicode-org/icu4x
 zmij 1.0.23  |  MIT  |  David Tolnay  |  https://github.com/dtolnay/zmij
 zune-core 0.5.3  |  MIT  |    |  https://github.com/etemesi254/zune-image
 zune-jpeg 0.5.15  |  MIT  |  caleb  |  https://github.com/etemesi254/zune-image/tree/dev/crates/zune-jpeg
@@ -328,7 +259,7 @@ OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ==============================================================================
-Applies to: adler2 2.0.1, allocator-api2 0.2.21, countme 3.0.1, displaydoc 0.2.7, glam 0.29.3, itoa 1.0.18, lazy_static 1.5.1, num_enum 0.7.6, num_enum_derive 0.7.6, once_cell 1.21.4, pin-project 1.1.13, pin-project-internal 1.1.13, pin-project-lite 0.2.17, portable-atomic 1.15.0, proc-macro-crate 3.5.0, proc-macro2 1.0.107, quote 1.0.47, rowan 0.17.0, rustc-hash 1.1.0, rustversion 1.0.23, serde 1.0.229, serde_core 1.0.229, serde_derive 1.0.229, serde_json 1.0.154, smol_str 0.2.2, smol_str 0.3.7, spin_on 0.1.1, syn 2.0.119, syn 3.0.9, text-size 1.1.1, thiserror 2.0.21, thiserror-impl 2.0.21, unicode-ident 1.0.27, zmij 1.0.23
+Applies to: adler2 2.0.1, allocator-api2 0.2.21, glam 0.29.3, itoa 1.0.18, once_cell 1.21.4, pin-project 1.1.13, pin-project-lite 0.2.17, portable-atomic 1.15.0, rustc-hash 1.1.0, serde 1.0.229, serde_core 1.0.229, serde_json 1.0.154, smol_str 0.2.2, thiserror 2.0.21, unicode-ident 1.0.27, zmij 1.0.23
 
 Permission is hereby granted, free of charge, to any
 person obtaining a copy of this software and associated
@@ -353,29 +284,6 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
-
-==============================================================================
-Applies to: annotate-snippets 0.12.17, anstyle 1.0.14, toml_datetime 1.1.2+spec-1.1.0, toml_edit 0.25.17+spec-1.1.0, toml_parser 1.1.5+spec-1.1.0, toml_writer 1.1.3+spec-1.1.0
-
-Copyright (c) Individual contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 
 ==============================================================================
 Applies to: arboard 3.7.0
@@ -614,36 +522,7 @@ OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ==============================================================================
-Applies to: by_address 1.2.1
-
-Copyright (c) 2017 Matt Brubeck
-
-Permission is hereby granted, free of charge, to any
-person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the
-Software without restriction, including without
-limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice
-shall be included in all copies or substantial portions
-of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
-
-==============================================================================
-Applies to: bytemuck 1.25.2, bytemuck_derive 1.12.1
+Applies to: bytemuck 1.25.2
 
 MIT License
 
@@ -1206,7 +1085,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ==============================================================================
-Applies to: const-field-offset 0.2.1, const-field-offset-macro 0.2.1, vtable 0.5.0, vtable-macro 0.5.0
+Applies to: const-field-offset 0.2.1, vtable 0.5.0
 
 MIT License
 
@@ -1217,31 +1096,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-==============================================================================
-Applies to: convert_case 0.10.0
-
-MIT License
-
-Copyright (c) 2025 rutrum
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 
 ==============================================================================
 Applies to: core-foundation 0.9.4, core-foundation-sys 0.8.7, core-graphics 0.23.2, core-graphics-types 0.1.3, euclid 0.22.14
@@ -1327,7 +1181,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 ==============================================================================
-Applies to: crossbeam-channel 0.5.17, crossbeam-deque 0.8.8, crossbeam-epoch 0.9.21, crossbeam-utils 0.8.23
+Applies to: crossbeam-channel 0.5.17, crossbeam-utils 0.8.23
 
 The MIT License (MIT)
 
@@ -1410,7 +1264,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 ==============================================================================
-Applies to: derive_more 2.1.1, derive_more-impl 2.1.1
+Applies to: derive_more 2.1.1
 
 The MIT License (MIT)
 
@@ -1475,29 +1329,6 @@ OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ==============================================================================
-Applies to: document-features 0.2.12, pin-weak 1.1.0
-
-Copyright (c) 2020 Olivier Goffart <ogoffart@sixtyfps.io>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-==============================================================================
 Applies to: dpi 0.1.2
 
 rust-lang/libm as a whole is available for use under the MIT license:
@@ -1551,35 +1382,6 @@ Copyright © 2017-2018 Arm Limited
 and labelled as such in comments in the individual source files. All
 have been licensed under extremely permissive terms.
 ------------------------------------------------------------------------------
-
-==============================================================================
-Applies to: either 1.19.0, itertools 0.15.0
-
-Copyright (c) 2015
-
-Permission is hereby granted, free of charge, to any
-person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the
-Software without restriction, including without
-limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice
-shall be included in all copies or substantial portions
-of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
 
 ==============================================================================
 Applies to: equivalent 1.0.3
@@ -1665,7 +1467,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ==============================================================================
-Applies to: fixed_decimal 0.7.3, icu_collections 2.4.0, icu_decimal 2.4.0, icu_decimal_data 2.4.0, icu_locale_core 2.4.0, icu_locale_fallback 2.4.0, icu_locale_fallback_data 2.4.0, icu_normalizer 2.4.0, icu_normalizer_data 2.4.0, icu_properties 2.4.0, icu_properties_data 2.4.0, icu_provider 2.4.0, icu_segmenter 2.4.0, icu_segmenter_data 2.4.0, litemap 0.8.3, potential_utf 0.1.6, tinystr 0.8.5, writeable 0.6.4, yoke 0.8.4, yoke-derive 0.8.4, zerofrom 0.1.8, zerofrom-derive 0.1.8, zerotrie 0.2.5, zerovec 0.11.9, zerovec-derive 0.11.7
+Applies to: fixed_decimal 0.7.3, icu_collections 2.4.0, icu_decimal 2.4.0, icu_decimal_data 2.4.0, icu_locale_core 2.4.0, icu_locale_fallback 2.4.0, icu_locale_fallback_data 2.4.0, icu_normalizer 2.4.0, icu_normalizer_data 2.4.0, icu_properties 2.4.0, icu_properties_data 2.4.0, icu_provider 2.4.0, icu_segmenter 2.4.0, icu_segmenter_data 2.4.0, litemap 0.8.3, potential_utf 0.1.6, tinystr 0.8.5, writeable 0.6.4, yoke 0.8.4, zerofrom 0.1.8, zerotrie 0.2.5, zerovec 0.11.9
 
 UNICODE LICENSE V3
 
@@ -1873,7 +1675,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 ==============================================================================
-Applies to: foreign-types 0.5.0, foreign-types-macros 0.2.4, foreign-types-shared 0.3.1
+Applies to: foreign-types 0.5.0, foreign-types-shared 0.3.1
 
 Copyright (c) 2017 The foreign-types Developers
 
@@ -1999,38 +1801,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ==============================================================================
-Applies to: hashbrown 0.14.5, hashbrown 0.16.1, hashbrown 0.17.1
+Applies to: hashbrown 0.16.1, hashbrown 0.17.1
 
 Copyright (c) 2016 Amanieu d'Antras
-
-Permission is hereby granted, free of charge, to any
-person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the
-Software without restriction, including without
-limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice
-shall be included in all copies or substantial portions
-of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
-
-==============================================================================
-Applies to: heck 0.5.0, unicode-bidi 0.3.18, unicode-segmentation 1.13.3, unicode-width 0.2.3, unicode-xid 0.2.6
-
-Copyright (c) 2015 The Rust Project Developers
 
 Permission is hereby granted, free of charge, to any
 person obtaining a copy of this software and associated
@@ -2553,35 +2326,6 @@ have been licensed under extremely permissive terms.
 Copyright notices are retained in src/* files where relevant.
 
 ==============================================================================
-Applies to: litrs 1.0.1
-
-Copyright (c) 2020 Project Developers
-
-Permission is hereby granted, free of charge, to any
-person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the
-Software without restriction, including without
-limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice
-shall be included in all copies or substantial portions
-of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
-
-==============================================================================
 Applies to: lock_api 0.4.14, parking_lot 0.12.5, parking_lot_core 0.9.12
 
 Copyright (c) 2016 The Rust Project Developers
@@ -2790,31 +2534,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-==============================================================================
-Applies to: natord 1.0.9
-
-The MIT License (MIT)
-
-Copyright (c) 2014, Kang Seonghoon.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
 
 ==============================================================================
 Applies to: objc2-app-kit 0.2.2, objc2-app-kit 0.3.2
@@ -3229,33 +2948,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 ==============================================================================
-Applies to: pin-utils 0.1.1
+Applies to: pin-weak 1.1.0
 
-Copyright (c) 2018 The pin-utils authors
+Copyright (c) 2020 Olivier Goffart <ogoffart@sixtyfps.io>
 
-Permission is hereby granted, free of charge, to any
-person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the
-Software without restriction, including without
-limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following
-conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice
-shall be included in all copies or substantial portions
-of the Software.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 ==============================================================================
 Applies to: png 0.18.1
@@ -3430,35 +3143,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ==============================================================================
-Applies to: rayon 1.12.0, rayon-core 1.13.0
-
-Copyright (c) 2010 The Rust Project Developers
-
-Permission is hereby granted, free of charge, to any
-person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the
-Software without restriction, including without
-limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice
-shall be included in all copies or substantial portions
-of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
-
-==============================================================================
 Applies to: resvg 0.48.1, usvg 0.48.1
 
 Copyright 2017 the Resvg Authors
@@ -3536,26 +3220,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-==============================================================================
-Applies to: rspolib 0.1.2
-
-Copyright (c) the rspolib authors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software
-and associated documentation files (the "Software"), to deal in the Software without restriction,
-including without limitation the rights to use, copy, modify, merge, publish, distribute,
-sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or
-substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
-NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES
-OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ==============================================================================
 Applies to: scoped-tls-hkt 0.1.5
@@ -3722,35 +3386,6 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 ==============================================================================
-Applies to: snafu 0.8.9, snafu-derive 0.8.9
-
-Copyright (c) 2019- Jake Goulding
-
-Permission is hereby granted, free of charge, to any
-person obtaining a copy of this software and associated
-documentation files (the "Software"), to deal in the
-Software without restriction, including without
-limitation the rights to use, copy, modify, merge,
-publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software
-is furnished to do so, subject to the following
-conditions:
-
-The above copyright notice and this permission notice
-shall be included in all copies or substantial portions
-of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
-TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
-SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
-
-==============================================================================
 Applies to: softbuffer 0.4.8
 
 Copyright 2022 Kirill Chibisov
@@ -3851,7 +3486,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 ==============================================================================
-Applies to: strum 0.28.0, strum_macros 0.28.0
+Applies to: strum 0.28.0
 
 MIT License
 
@@ -3926,17 +3561,6 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
-
-==============================================================================
-Applies to: synstructure 0.14.0
-
-Copyright 2016 Nika Layzell
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ==============================================================================
 Applies to: sys-locale 0.3.2
@@ -4056,9 +3680,32 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 
 ==============================================================================
-Applies to: typed-index-collections 3.5.0
+Applies to: unicase 2.10.0
 
-Copyright (c) 2020 Andrey Zheleznov <zheland.net@gmail.com>
+Copyright (c) 2014-2026 Sean McArthur
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+==============================================================================
+Applies to: unicode-bidi 0.3.18, unicode-segmentation 1.13.3, unicode-width 0.2.3
+
+Copyright (c) 2015 The Rust Project Developers
 
 Permission is hereby granted, free of charge, to any
 person obtaining a copy of this software and associated
@@ -4083,29 +3730,6 @@ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
-
-==============================================================================
-Applies to: unicase 2.10.0
-
-Copyright (c) 2014-2026 Sean McArthur
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
 
 ==============================================================================
 Applies to: unicode-script 0.5.9
@@ -4252,31 +3876,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-==============================================================================
-Applies to: windows 0.62.2, windows-collections 0.3.2, windows-core 0.62.2, windows-future 0.3.2, windows-implement 0.60.2, windows-interface 0.59.3, windows-link 0.2.1, windows-numerics 0.3.1, windows-result 0.4.1, windows-strings 0.5.1, windows-threading 0.2.1
-
-MIT License
-
-    Copyright (c) Microsoft Corporation.
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in all
-    copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    SOFTWARE
 
 ==============================================================================
 Applies to: winit 0.30.13
@@ -4484,28 +4083,6 @@ Apache License
    limitations under the License.
 
 ==============================================================================
-Applies to: winnow 1.0.4
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-==============================================================================
 Applies to: xmlwriter 0.1.0
 
 The MIT License (MIT)
@@ -4554,7 +4131,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 ==============================================================================
-Applies to: zerocopy 0.8.63, zerocopy-derive 0.8.63
+Applies to: zerocopy 0.8.63
 
 Copyright 2023 The Fuchsia Authors
 

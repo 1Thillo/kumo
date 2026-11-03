@@ -9,10 +9,10 @@ on:
     tags: ["v*"]
   pull_request:
 
+# The build runs third-party code (cargo, build scripts), so it only gets a read-only token.
+# Only the release job below can write, and only for tags.
 permissions:
-  contents: write
-  id-token: write       # signs the build provenance
-  attestations: write
+  contents: read
 
 jobs:
   build:
@@ -46,13 +46,24 @@ jobs:
           path: |
             Kumo-Setup-*.exe
             Kumo-Setup-*.exe.sha256
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # creates the release
+      id-token: write       # signs the build provenance
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: kumo
       - name: Attest build provenance
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/attest-build-provenance@v2
         with:
           subject-path: Kumo-Setup-*.exe
       - name: Publish release
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           files: |

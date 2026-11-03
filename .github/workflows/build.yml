@@ -11,6 +11,8 @@ on:
 
 permissions:
   contents: write
+  id-token: write       # signs the build provenance
+  attestations: write
 
 jobs:
   build:
@@ -30,12 +32,29 @@ jobs:
         run: |
           $version = (Select-String -Path Cargo.toml -Pattern '^version = "(.+)"').Matches[0].Groups[1].Value
           Copy-Item target/release/kumo.exe "Kumo-Setup-$version.exe"
+      - name: Checksum
+        shell: pwsh
+        run: |
+          $exe = (Get-ChildItem Kumo-Setup-*.exe).Name
+          $hash = (Get-FileHash $exe -Algorithm SHA256).Hash.ToLower()
+          # "hash *file" is the format `sha256sum -c` reads; the file is ASCII with a Unix line end
+          [IO.File]::WriteAllText("$exe.sha256", "$hash *$exe`n", [Text.Encoding]::ASCII)
+          Write-Host "$hash  $exe"
       - uses: actions/upload-artifact@v4
         with:
           name: kumo
-          path: Kumo-Setup-*.exe
+          path: |
+            Kumo-Setup-*.exe
+            Kumo-Setup-*.exe.sha256
+      - name: Attest build provenance
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: Kumo-Setup-*.exe
       - name: Publish release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: Kumo-Setup-*.exe
+          files: |
+            Kumo-Setup-*.exe
+            Kumo-Setup-*.exe.sha256

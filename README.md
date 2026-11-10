@@ -21,20 +21,20 @@ Website: [kumo.hyos.tech](https://kumo.hyos.tech) · Deutsche Kurzanleitung: [we
    The source code is in this repository and every release is built from it by
    [GitHub Actions](.github/workflows/build.yml), so you can check what you run.
 
-   To be sure the file is the one GitHub built, check it before you start it. Every release has
-   a `.sha256` file next to the exe:
+   To be sure the file is the one GitHub built, check it before you start it. Releases after
+   0.2.4 have a `.sha256` file next to the exe (0.2.4 and older do not):
 
    ```powershell
-   (Get-FileHash .\Kumo-Setup-0.2.4.exe -Algorithm SHA256).Hash.ToLower()
-   Get-Content .\Kumo-Setup-0.2.4.exe.sha256
+   (Get-FileHash .\Kumo-Setup-<version>.exe -Algorithm SHA256).Hash.ToLower()
+   Get-Content .\Kumo-Setup-<version>.exe.sha256
    ```
 
-   Both lines must start with the same value. Releases are also attested by GitHub, which shows
-   that the file was built from this repository by the workflow above (needs the
+   Both lines must start with the same value. Releases after 0.2.4 are also attested by GitHub,
+   which shows that the file was built from this repository by the workflow above (needs the
    [GitHub CLI](https://cli.github.com)):
 
    ```powershell
-   gh attestation verify .\Kumo-Setup-0.2.4.exe --repo Hamido212/kumo
+   gh attestation verify .\Kumo-Setup-<version>.exe --repo Hamido212/kumo
    ```
 4. Follow the three steps of the setup. Your new wallpaper starts right away.
 
